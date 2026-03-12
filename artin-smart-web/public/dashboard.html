@@ -1,0 +1,465 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>控制台 - ArtinSmart</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<body class="bg-gray-50 min-h-screen">
+    <!-- Header -->
+    <header class="bg-white shadow-sm sticky top-0 z-50">
+        <div class="max-w-7xl mx-auto px-4 py-4 flex justify-between items-center">
+            <div class="flex items-center gap-4">
+                <a href="/" class="text-xl font-bold text-blue-600">ArtinSmart</a>
+                <span class="text-gray-400">|</span>
+                <span class="text-gray-700">控制台</span>
+            </div>
+            <div class="flex items-center gap-4">
+                <span id="user-email" class="text-sm text-gray-600">加载中...</span>
+                <button onclick="logout()" class="text-sm text-red-600 hover:text-red-800">退出</button>
+            </div>
+        </div>
+    </header>
+
+    <div class="max-w-7xl mx-auto px-4 py-8">
+        <!-- Welcome Banner -->
+        <div class="bg-gradient-to-r from-blue-600 to-purple-600 rounded-xl shadow-lg p-6 mb-6 text-white">
+            <h1 class="text-2xl font-bold mb-2">欢迎回来，<span id="welcome-name">用户</span></h1>
+            <p class="opacity-90">管理您的 API 密钥、监控使用量、充值账户</p>
+        </div>
+
+        <!-- Stats Cards -->
+        <div class="grid grid-cols-1 md:grid-cols-4 gap-4 mb-6">
+            <!-- 余额 -->
+            <div class="bg-white rounded-xl shadow-sm p-6 border-l-4 border-green-500">
+                <div class="flex items-center justify-between">
+                    <div>
+                        <p class="text-sm text-gray-500">账户余额</p>
+                        <p class="text-3xl font-bold text-gray-900 mt-1">¥<span id="credits">0</span></p>
+                    </div>
+                    <div class="w-12 h-12 bg-green-100 rounded-full flex items-center justify-center">
+                        <i class="fas fa-wallet text-green-600 text-xl"></i>
+                    </div>
+                </div>
+                <button onclick="showRecharge()" class="mt-3 text-sm text-green-600 hover:underline">立即充值 →</button>
+            </div>
+            
+            <!-- 本月调用 -->
+            <div class="bg-white rounded-xl shadow-sm p-6 border-l-4 border-blue-500">
+                <div class="flex items-center justify-between">
+                    <div>
+                        <p class="text-sm text-gray-500">本月调用</p>
+                        <p class="text-3xl font-bold text-gray-900 mt-1"><span id="month-calls">0</span></p>
+                    </div>
+                    <div class="w-12 h-12 bg-blue-100 rounded-full flex items-center justify-center">
+                        <i class="fas fa-bolt text-blue-600 text-xl"></i>
+                    </div>
+                </div>
+                <p class="mt-3 text-sm text-gray-500">次 API 调用</p>
+            </div>
+            
+            <!-- Tokens -->
+            <div class="bg-white rounded-xl shadow-sm p-6 border-l-4 border-purple-500">
+                <div class="flex items-center justify-between">
+                    <div>
+                        <p class="text-sm text-gray-500">本月 Tokens</p>
+                        <p class="text-3xl font-bold text-gray-900 mt-1"><span id="month-tokens">0</span></p>
+                    </div>
+                    <div class="w-12 h-12 bg-purple-100 rounded-full flex items-center justify-center">
+                        <i class="fas fa-microchip text-purple-600 text-xl"></i>
+                    </div>
+                </div>
+                <p class="mt-3 text-sm text-gray-500">消耗 Tokens</p>
+            </div>
+            
+            <!-- 费用 -->
+            <div class="bg-white rounded-xl shadow-sm p-6 border-l-4 border-orange-500">
+                <div class="flex items-center justify-between">
+                    <div>
+                        <p class="text-sm text-gray-500">本月消费</p>
+                        <p class="text-3xl font-bold text-gray-900 mt-1">¥<span id="month-cost">0</span></p>
+                    </div>
+                    <div class="w-12 h-12 bg-orange-100 rounded-full flex items-center justify-center">
+                        <i class="fas fa-receipt text-orange-600 text-xl"></i>
+                    </div>
+                </div>
+                <p class="mt-3 text-sm text-gray-500">¥<span id="per-million"></span>/百万 Tokens</p>
+            </div>
+        </div>
+
+        <!-- Main Content Grid -->
+        <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+            <!-- Left: API Keys -->
+            <div class="lg:col-span-2">
+                <!-- API Keys Section -->
+                <div class="bg-white rounded-xl shadow-sm p-6 mb-6">
+                    <div class="flex justify-between items-center mb-4">
+                        <h2 class="text-lg font-semibold text-gray-900">
+                            <i class="fas fa-key text-blue-600 mr-2"></i>API 密钥
+                        </h2>
+                        <button onclick="createApiKey()" class="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 text-sm">
+                            <i class="fas fa-plus mr-1"></i>创建新密钥
+                        </button>
+                    </div>
+                    
+                    <div id="api-keys-list">
+                        <div class="text-center py-8 text-gray-500">
+                            <i class="fas fa-key text-4xl mb-3 opacity-50"></i>
+                            <p>暂无 API 密钥</p>
+                            <button onclick="createApiKey()" class="mt-2 text-blue-600 hover:underline">创建您的第一个密钥</button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Usage by Model -->
+                <div class="bg-white rounded-xl shadow-sm p-6">
+                    <div class="flex justify-between items-center mb-4">
+                        <h2 class="text-lg font-semibold text-gray-900">
+                            <i class="fas fa-chart-pie text-purple-600 mr-2"></i>各模型用量分布
+                        </h2>
+                        <div class="flex gap-2">
+                            <button onclick="loadUsage(7)" class="px-3 py-1 text-sm bg-blue-100 text-blue-600 rounded-lg">7天</button>
+                            <button onclick="loadUsage(30)" class="px-3 py-1 text-sm bg-gray-100 text-gray-600 rounded-lg hover:bg-gray-200">30天</button>
+                        </div>
+                    </div>
+                    
+                    <div id="model-usage">
+                        <div class="text-center py-8 text-gray-500">
+                            <i class="fas fa-spinner fa-spin text-2xl mb-3"></i>
+                            <p>加载中...</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Right: Sidebar -->
+            <div>
+                <!-- Quick Start -->
+                <div class="bg-white rounded-xl shadow-sm p-6 mb-6">
+                    <h2 class="text-lg font-semibold text-gray-900 mb-4">
+                        <i class="fas fa-rocket text-orange-600 mr-2"></i>快速开始
+                    </h2>
+                    <div class="bg-gray-900 rounded-lg p-4 overflow-x-auto">
+                        <pre class="text-green-400 text-xs font-mono whitespace-pre-wrap">curl -X POST http://47.111.4.141:8000/api/v1/chat/completions \
+  -H "Content-Type: application/json" \
+  -H "Authorization: Bearer <span id="curl-key">YOUR-API-KEY</span>" \
+  -d '{"model": "MiniMax-M2.5", "messages": [{"role": "user", "content": "你好"}]}'</pre>
+                    </div>
+                    <button onclick="copyCurl()" class="mt-3 w-full py-2 border border-gray-300 rounded-lg hover:bg-gray-50 text-sm">
+                        <i class="fas fa-copy mr-1"></i>复制代码
+                    </button>
+                    <a href="/api-docs.html" class="mt-2 block text-center text-blue-600 hover:underline text-sm">查看完整 API 文档 →</a>
+                </div>
+
+                <!-- Available Models -->
+                <div class="bg-white rounded-xl shadow-sm p-6">
+                    <h2 class="text-lg font-semibold text-gray-900 mb-4">
+                        <i class="fas fa-cubes text-green-600 mr-2"></i>可用模型
+                    </h2>
+                    <div class="space-y-3">
+                        <div class="flex items-center justify-between p-3 bg-blue-50 rounded-lg">
+                            <div>
+                                <p class="font-medium text-gray-900">MiniMax M2.5</p>
+                                <p class="text-xs text-gray-500">高速 • 200K context</p>
+                            </div>
+                            <span class="px-2 py-1 bg-green-100 text-green-700 text-xs rounded">可用</span>
+                        </div>
+                        <div class="flex items-center justify-between p-3 bg-purple-50 rounded-lg">
+                            <div>
+                                <p class="font-medium text-gray-900">MiniMax M2.5-highspeed</p>
+                                <p class="text-xs text-gray-500">极速 • 100 TPS</p>
+                            </div>
+                            <span class="px-2 py-1 bg-green-100 text-green-700 text-xs rounded">可用</span>
+                        </div>
+                        <div class="flex items-center justify-between p-3 bg-gray-50 rounded-lg">
+                            <div>
+                                <p class="font-medium text-gray-900">更多模型</p>
+                                <p class="text-xs text-gray-500">即将支持...</p>
+                            </div>
+                            <span class="px-2 py-1 bg-gray-200 text-gray-500 text-xs rounded">敬请期待</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Daily Usage Chart -->
+        <div class="bg-white rounded-xl shadow-sm p-6 mt-6">
+            <h2 class="text-lg font-semibold text-gray-900 mb-4">
+                <i class="fas fa-chart-line text-blue-600 mr-2"></i>每日使用趋势
+            </h2>
+            <div id="daily-usage" class="h-64 flex items-center justify-center text-gray-500">
+                <i class="fas fa-spinner fa-spin text-2xl"></i>
+            </div>
+        </div>
+    </div>
+
+    <!-- Create API Key Modal -->
+    <div id="modal-create-key" class="fixed inset-0 bg-black/50 hidden items-center justify-center z-50">
+        <div class="bg-white rounded-xl shadow-xl max-w-md w-full mx-4 p-6">
+            <h3 class="text-xl font-bold text-gray-900 mb-4">创建 API 密钥</h3>
+            <div class="mb-4">
+                <label class="block text-sm font-medium text-gray-700 mb-1">密钥名称（可选）</label>
+                <input type="text" id="new-key-name" placeholder="例如：我的开发密钥" 
+                    class="w-full px-4 py-2 border border-gray-300 rounded-lg">
+            </div>
+            <div class="flex gap-3">
+                <button onclick="closeModal()" class="flex-1 py-2 border border-gray-300 rounded-lg hover:bg-gray-50">取消</button>
+                <button onclick="confirmCreateKey()" class="flex-1 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700">创建</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const API_BASE = 'http://47.111.4.141:8000';
+        let auth = null;
+        let currentApiKeys = [];
+
+        // 初始化
+        function init() {
+            auth = checkAuth();
+            if (!auth) return;
+            
+            // 显示用户信息
+            document.getElementById('user-email').textContent = auth.user.email || auth.user.phone;
+            document.getElementById('welcome-name').textContent = ((auth.user.email || auth.user.phone) + '').split('@')[0];
+            document.getElementById('credits').textContent = (auth.user.credits || 0).toFixed(2);
+            document.getElementById('curl-key').textContent = auth.apiKey;
+            
+            // 加载API密钥和用量
+            loadApiKeys();
+            loadUsage(7);
+        }
+
+        function checkAuth() {
+            const user = localStorage.getItem('artin_user');
+            const apiKey = localStorage.getItem('artin_api_key');
+            
+            if (!user || !apiKey) {
+                alert('请先登录');
+                window.location.href = '/auth.html';
+                return null;
+            }
+            
+            return { user: JSON.parse(user), apiKey };
+        }
+
+        // 加载 API 密钥列表
+        async function loadApiKeys() {
+            try {
+                const res = await fetch(API_BASE + '/api/user/api-keys?api_key=' + auth.apiKey);
+                const data = await res.json();
+                
+                currentApiKeys = data.api_keys || [];
+                renderApiKeys();
+            } catch (e) {
+                // 如果API失败，显示默认密钥
+                currentApiKeys = [{
+                    id: 1,
+                    name: '默认密钥',
+                    key: auth.apiKey,
+                    status: 'active'
+                }];
+                renderApiKeys();
+            }
+        }
+
+        function renderApiKeys() {
+            const container = document.getElementById('api-keys-list');
+            
+            if (currentApiKeys.length === 0) {
+                container.innerHTML = `
+                    <div class="text-center py-8 text-gray-500">
+                        <i class="fas fa-key text-4xl mb-3 opacity-50"></i>
+                        <p>暂无 API 密钥</p>
+                        <button onclick="createApiKey()" class="mt-2 text-blue-600 hover:underline">创建您的第一个密钥</button>
+                    </div>
+                `;
+                return;
+            }
+            
+            container.innerHTML = currentApiKeys.map(key => `
+                <div class="border border-gray-200 rounded-lg p-4 mb-3 hover:shadow-md transition">
+                    <div class="flex justify-between items-start">
+                        <div class="flex-1">
+                            <div class="flex items-center gap-2">
+                                <p class="font-medium text-gray-900">${key.name || '未命名密钥'}</p>
+                                <span class="px-2 py-0.5 ${key.status === 'active' ? 'bg-green-100 text-green-700' : 'bg-gray-100 text-gray-500'} text-xs rounded">
+                                    ${key.status === 'active' ? '正常' : '已停用'}
+                                </span>
+                            </div>
+                            <code class="text-sm text-gray-500 bg-gray-100 px-2 py-1 rounded mt-2 inline-block">${key.key}</code>
+                            <p class="text-xs text-gray-400 mt-2">创建于：${key.created_at || '未知'}</p>
+                        </div>
+                        <div class="flex gap-2">
+                            <button onclick="copyKey('${key.key}')" class="p-2 text-gray-500 hover:text-blue-600 hover:bg-blue-50 rounded" title="复制">
+                                <i class="fas fa-copy"></i>
+                            </button>
+                            <button onclick="deleteKey(${key.id})" class="p-2 text-gray-500 hover:text-red-600 hover:bg-red-50 rounded" title="删除">
+                                <i class="fas fa-trash"></i>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        // 创建 API 密钥
+        function createApiKey() {
+            document.getElementById('modal-create-key').classList.remove('hidden');
+            document.getElementById('modal-create-key').classList.add('flex');
+        }
+
+        function closeModal() {
+            document.getElementById('modal-create-key').classList.add('hidden');
+            document.getElementById('modal-create-key').classList.remove('flex');
+        }
+
+        async function confirmCreateKey() {
+            const name = document.getElementById('new-key-name').value || '新密钥';
+            
+            try {
+                const res = await fetch(API_BASE + '/api/user/api-keys?api_key=' + auth.apiKey + '&name=' + encodeURIComponent(name), {
+                    method: 'POST'
+                });
+                const data = await res.json();
+                
+                if (data.api_key) {
+                    alert('密钥创建成功！');
+                    loadApiKeys();
+                    closeModal();
+                } else {
+                    alert(data.detail || '创建失败');
+                }
+            } catch (e) {
+                alert('创建失败: ' + e.message);
+            }
+        }
+
+        function copyKey(key) {
+            navigator.clipboard.writeText(key).then(() => {
+                alert('已复制到剪贴板');
+            });
+        }
+
+        function copyCurl() {
+            const key = document.getElementById('curl-key').textContent;
+            const curl = `curl -X POST http://47.111.4.141:8000/api/v1/chat/completions \\
+  -H "Content-Type: application/json" \\
+  -H "Authorization: Bearer ${key}" \\
+  -d '{"model": "MiniMax-M2.5", "messages": [{"role": "user", "content": "你好"}]}'`;
+            
+            navigator.clipboard.writeText(curl).then(() => {
+                alert('已复制到剪贴板');
+            });
+        }
+
+        async function deleteKey(id) {
+            if (!confirm('确定要删除这个密钥吗？此操作不可恢复。')) return;
+            // 删除逻辑...
+            alert('删除功能开发中');
+        }
+
+        // 加载用量统计
+        async function loadUsage(days) {
+            try {
+                const res = await fetch(API_BASE + '/api/user/usage?api_key=' + auth.apiKey + '&days=' + days);
+                const data = await res.json();
+                
+                // 更新统计
+                const summary = data.summary || {};
+                document.getElementById('month-calls').textContent = summary.total_requests || 0;
+                document.getElementById('month-tokens').textContent = (summary.total_tokens || 0).toLocaleString();
+                document.getElementById('month-cost').textContent = (summary.total_cost || 0).toFixed(2);
+                document.getElementById('per-million').textContent = '10';
+                
+                // 按模型用量
+                renderModelUsage(data.by_model || []);
+                
+                // 每日趋势
+                renderDailyUsage(data.daily || []);
+            } catch (e) {
+                document.getElementById('model-usage').innerHTML = '<p class="text-gray-500 text-center py-4">暂无数据</p>';
+                document.getElementById('daily-usage').innerHTML = '<p class="text-gray-500 text-center py-4">暂无数据</p>';
+            }
+        }
+
+        function renderModelUsage(models) {
+            const container = document.getElementById('model-usage');
+            
+            if (!models || models.length === 0) {
+                container.innerHTML = '<p class="text-gray-500 text-center py-4">暂无使用记录</p>';
+                return;
+            }
+            
+            const total = models.reduce((sum, m) => sum + m.total_tokens, 0);
+            
+            container.innerHTML = models.map(m => {
+                const pct = total > 0 ? (m.total_tokens / total * 100).toFixed(1) : 0;
+                const colors = ['bg-blue-500', 'bg-purple-500', 'bg-green-500', 'bg-orange-500', 'bg-red-500'];
+                const color = colors[models.indexOf(m) % colors.length];
+                
+                return `
+                    <div class="mb-4">
+                        <div class="flex justify-between text-sm mb-1">
+                            <span class="font-medium">${m.model}</span>
+                            <span class="text-gray-500">${m.total_tokens.toLocaleString()} tokens (${pct}%)</span>
+                        </div>
+                        <div class="h-2 bg-gray-200 rounded-full overflow-hidden">
+                            <div class="h-full ${color} rounded-full" style="width: ${pct}%"></div>
+                        </div>
+                        <div class="flex justify-between text-xs text-gray-500 mt-1">
+                            <span>${m.requests} 次调用</span>
+                            <span>¥${m.cost.toFixed(4)}</span>
+                        </div>
+                    </div>
+                `;
+            }).join('');
+        }
+
+        function renderDailyUsage(daily) {
+            const container = document.getElementById('daily-usage');
+            
+            if (!daily || daily.length === 0) {
+                container.innerHTML = '<p class="text-gray-500 text-center py-4">暂无数据</p>';
+                return;
+            }
+            
+            // 简单的条形图
+            const maxTokens = Math.max(...daily.map(d => d.total_tokens));
+            
+            container.innerHTML = `
+                <div class="w-full space-y-2">
+                    ${daily.slice(-14).map(d => {
+                        const height = maxTokens > 0 ? (d.total_tokens / maxTokens * 100) : 0;
+                        return `
+                            <div class="flex items-center gap-2">
+                                <span class="text-xs text-gray-500 w-20">${d.date.slice(5)}</span>
+                                <div class="flex-1 h-6 bg-gray-100 rounded overflow-hidden">
+                                    <div class="h-full bg-gradient-to-r from-blue-400 to-blue-600 rounded" style="width: ${height}%"></div>
+                                </div>
+                                <span class="text-xs text-gray-500 w-16 text-right">${d.total_tokens.toLocaleString()}</span>
+                            </div>
+                        `;
+                    }).join('')}
+                </div>
+            `;
+        }
+
+        function showRecharge() {
+            alert('充值功能开发中，敬请期待！');
+        }
+
+        function logout() {
+            localStorage.removeItem('artin_user');
+            localStorage.removeItem('artin_api_key');
+            window.location.href = '/';
+        }
+
+        // 启动
+        init();
+    </script>
+</body>
+</html>

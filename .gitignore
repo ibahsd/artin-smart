@@ -1,0 +1,38 @@
+# Dependencies
+node_modules/
+__pycache__/
+*.pyc
+venv/
+env/
+.venv/
+
+# Build outputs
+dist/
+.next/
+out/
+
+# Archives (recreate from source)
+*.zip
+*.tar.gz
+*.tar
+
+# Environment
+.env
+.env.local
+
+# IDE
+.vscode/
+.idea/
+*.swp
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Deploy scripts (keep source)
+*.py
+!deploy_*.py
+
+# Node
+npm-debug.log
+yarn-error.log

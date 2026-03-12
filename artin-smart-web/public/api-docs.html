@@ -1,0 +1,723 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>API文档 - ArtinSmart</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        .code-block { font-family: 'Fira Code', 'Consolas', monospace; }
+        pre { white-space: pre-wrap; word-wrap: break-word; }
+        .sidebar-item {
+            display: block;
+            padding: 8px 12px;
+            border-radius: 6px;
+            color: #6b7280;
+            font-size: 14px;
+            transition: all 0.2s;
+            border-left: 3px solid transparent;
+        }
+        .sidebar-item:hover {
+            background: #f3f4f6;
+            color: #3b82f6;
+        }
+        .sidebar-item.active {
+            background: #eff6ff;
+            color: #3b82f6;
+            border-left-color: #3b82f6;
+            font-weight: 500;
+        }
+        .sidebar-section {
+            font-size: 12px;
+            font-weight: 600;
+            color: #9ca3af;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            padding: 16px 12px 8px;
+        }
+    </style>
+</head>
+<body class="bg-gray-50">
+    <!-- Header -->
+    <header class="bg-white shadow-sm sticky top-0 z-50">
+        <div class="max-w-7xl mx-auto px-4 py-4 flex justify-between items-center">
+            <a href="/" class="text-xl font-bold text-blue-600">ArtinSmart</a>
+            <nav class="hidden md:flex gap-6">
+                <a href="/" class="text-gray-600 hover:text-blue-600">首页</a>
+                <a href="/pricing.html" class="text-gray-600 hover:text-blue-600">定价</a>
+                <a href="/api-docs.html" class="text-blue-600 font-medium">文档</a>
+            </nav>
+            <div class="flex gap-3">
+                <a href="/auth.html" class="px-4 py-2 text-gray-600 hover:text-blue-600">登录</a>
+                <a href="/auth.html" class="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700">立即开始</a>
+            </div>
+        </div>
+    </header>
+
+    <div class="max-w-7xl mx-auto px-4 py-8 flex gap-8">
+        <!-- 左侧目录 -->
+        <aside class="w-64 hidden lg:block">
+            <div class="sticky top-24">
+                <div class="bg-white rounded-xl shadow-sm p-2">
+                    <div class="px-3 py-2">
+                        <i class="fas fa-book mr-2 text-blue-600"></i>
+                        <span class="font-semibold text-gray-900">目录</span>
+                    </div>
+                    <hr class="my-2">
+                    
+                    <a href="#intro" class="sidebar-item">
+                        <i class="fas fa-info-circle mr-2 w-4"></i>概述
+                    </a>
+                    <a href="#quickstart" class="sidebar-item">
+                        <i class="fas fa-rocket mr-2 w-4"></i>快速开始
+                    </a>
+                    <a href="#auth" class="sidebar-item">
+                        <i class="fas fa-shield-alt mr-2 w-4"></i>认证授权
+                    </a>
+                    
+                    <div class="sidebar-section">接口</div>
+                    <a href="#endpoints" class="sidebar-item">
+                        <i class="fas fa-plug mr-2 w-4"></i>接口概览
+                    </a>
+                    <a href="#chat" class="sidebar-item pl-8">
+                        <i class="fas fa-comments mr-2 w-4"></i>聊天完成
+                    </a>
+                    <a href="#models" class="sidebar-item pl-8">
+                        <i class="fas fa-brain mr-2 w-4"></i>模型列表
+                    </a>
+                    <a href="#usage" class="sidebar-item pl-8">
+                        <i class="fas fa-chart-bar mr-2 w-4"></i>用量查询
+                    </a>
+                    
+                    <div class="sidebar-section">开发</div>
+                    <a href="#sdks" class="sidebar-item">
+                        <i class="fas fa-code mr-2 w-4"></i>SDK 示例
+                    </a>
+                    <a href="#errors" class="sidebar-item">
+                        <i class="fas fa-exclamation-triangle mr-2 w-4"></i>错误码
+                    </a>
+                    <a href="#limits" class="sidebar-item">
+                        <i class="fas fa-tachometer-alt mr-2 w-4"></i>限制说明
+                    </a>
+                    <a href="#bestpractice" class="sidebar-item">
+                        <i class="fas fa-lightbulb mr-2 w-4"></i>最佳实践
+                    </a>
+                </div>
+            </div>
+        </aside>
+
+        <!-- 主内容 -->
+        <main class="flex-1">
+            <!-- 标题区 -->
+            <div class="bg-gradient-to-r from-blue-600 to-purple-600 rounded-xl p-8 text-white mb-8">
+                <h1 class="text-3xl font-bold mb-2">ArtinSmart API</h1>
+                <p class="opacity-90">完整的技术文档，助您快速接入 AI 能力</p>
+                <div class="mt-4 flex gap-4">
+                    <span class="px-3 py-1 bg-white/20 rounded-full text-sm">REST API</span>
+                    <span class="px-3 py-1 bg-white/20 rounded-full text-sm">JSON</span>
+                    <span class="px-3 py-1 bg-white/20 rounded-full text-sm">OAuth 2.0</span>
+                </div>
+            </div>
+
+            <!-- 概述 -->
+            <section id="intro" class="bg-white rounded-xl shadow-sm p-6 mb-8">
+                <h2 class="text-2xl font-bold mb-4">📖 概述</h2>
+                <p class="text-gray-600 mb-4">
+                    ArtinSmart API 是一个兼容 OpenAI 风格的 AI API 服务，支持多种大语言模型。
+                    您可以使用 OpenAI 的 SDK 或任何 HTTP 客户端来调用我们的 API。
+                </p>
+                <div class="grid md:grid-cols-3 gap-4 mt-6">
+                    <div class="bg-blue-50 p-4 rounded-lg">
+                        <div class="text-2xl font-bold text-blue-600">100+</div>
+                        <div class="text-sm text-gray-600">TPS 并发</div>
+                    </div>
+                    <div class="bg-green-50 p-4 rounded-lg">
+                        <div class="text-2xl font-bold text-green-600">200K</div>
+                        <div class="text-sm text-gray-600">上下文长度</div>
+                    </div>
+                    <div class="bg-purple-50 p-4 rounded-lg">
+                        <div class="text-2xl font-bold text-purple-600">99.9%</div>
+                        <div class="text-sm text-gray-600">可用性 SLA</div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- 快速开始 -->
+            <section id="quickstart" class="bg-white rounded-xl shadow-sm p-6 mb-8">
+                <h2 class="text-2xl font-bold mb-4">🚀 快速开始</h2>
+                <p class="text-gray-600 mb-4">只需 3 步即可开始使用：</p>
+                
+                <div class="space-y-4 mb-6">
+                    <div class="flex gap-4">
+                        <div class="w-8 h-8 bg-blue-600 text-white rounded-full flex items-center justify-center font-bold flex-shrink-0">1</div>
+                        <div>
+                            <h3 class="font-semibold">注册账号</h3>
+                            <p class="text-sm text-gray-600">访问 <a href="/auth.html" class="text-blue-600">artinsmart.cn/auth.html</a> 注册账号</p>
+                        </div>
+                    </div>
+                    <div class="flex gap-4">
+                        <div class="w-8 h-8 bg-blue-600 text-white rounded-full flex items-center justify-center font-bold flex-shrink-0">2</div>
+                        <div>
+                            <h3 class="font-semibold">获取 API Key</h3>
+                            <p class="text-sm text-gray-600">登录后在控制台获取您的 API Key</p>
+                        </div>
+                    </div>
+                    <div class="flex gap-4">
+                        <div class="w-8 h-8 bg-blue-600 text-white rounded-full flex items-center justify-center font-bold flex-shrink-0">3</div>
+                        <div>
+                            <h3 class="font-semibold">开始调用</h3>
+                            <p class="text-sm text-gray-600">使用 API Key 调用接口</p>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="bg-gray-900 rounded-lg p-4">
+                    <div class="flex justify-between items-center mb-2">
+                        <span class="text-green-400 font-mono text-sm">curl</span>
+                        <button onclick="copyCode(this)" class="text-gray-400 hover:text-white text-sm"><i class="fas fa-copy"></i> 复制</button>
+                    </div>
+                    <pre class="text-green-400 text-sm font-mono overflow-x-auto">curl -X POST http://47.111.4.141:8000/api/v1/chat/completions \
+  -H "Content-Type: application/json" \
+  -H "Authorization: Bearer YOUR_API_KEY" \
+  -d '{
+    "model": "MiniMax-M2.5",
+    "messages": [{"role": "user", "content": "你好，请介绍一下自己"}]
+  }'</pre>
+                </div>
+            </section>
+
+            <!-- 认证 -->
+            <section id="auth" class="bg-white rounded-xl shadow-sm p-6 mb-8">
+                <h2 class="text-2xl font-bold mb-4">🔐 认证授权</h2>
+                
+                <div class="bg-yellow-50 border-l-4 border-yellow-400 p-4 mb-4">
+                    <p class="text-yellow-800"><i class="fas fa-exclamation-triangle mr-2"></i><strong>重要：</strong>请妥善保管您的 API Key，不要在客户端代码中暴露！</p>
+                </div>
+
+                <h3 class="font-semibold mb-2">请求头格式</h3>
+                <div class="bg-gray-900 rounded-lg p-4 mb-4">
+                    <pre class="text-green-400 text-sm font-mono">Authorization: Bearer YOUR_API_KEY</pre>
+                </div>
+
+                <h3 class="font-semibold mb-2">示例</h3>
+                <div class="bg-gray-900 rounded-lg p-4">
+                    <pre class="text-green-400 text-sm font-mono"># cURL
+curl -H "Authorization: Bearer artin-xxxxx" ...
+
+# Python
+import requests
+headers = {
+    "Authorization": "Bearer artin-xxxxx",
+    "Content-Type": "application/json"
+}
+
+# JavaScript
+fetch(url, {
+    headers: {
+        "Authorization": "Bearer artin-xxxxx",
+        "Content-Type": "application/json"
+    }
+})</pre>
+                </div>
+            </section>
+
+            <!-- 接口列表 -->
+            <section id="endpoints" class="bg-white rounded-xl shadow-sm p-6 mb-8">
+                <h2 class="text-2xl font-bold mb-4">📡 接口列表</h2>
+
+                <!-- 聊天接口 -->
+                <div id="chat" class="mb-8">
+                    <h3 class="text-xl font-bold mb-4 border-b pb-2">聊天完成 /v1/chat/completions</h3>
+                    
+                    <div class="flex gap-2 mb-4">
+                        <span class="px-2 py-1 bg-green-100 text-green-700 rounded text-sm font-mono">POST</span>
+                        <span class="text-gray-600">/api/v1/chat/completions</span>
+                    </div>
+
+                    <h4 class="font-semibold mb-2">请求参数</h4>
+                    <div class="overflow-x-auto mb-4">
+                        <table class="w-full text-sm">
+                            <thead class="bg-gray-50">
+                                <tr>
+                                    <th class="text-left py-2 px-3">参数</th>
+                                    <th class="text-left py-2 px-3">类型</th>
+                                    <th class="text-left py-2 px-3">必填</th>
+                                    <th class="text-left py-2 px-3">说明</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr class="border-t">
+                                    <td class="py-2 px-3 font-mono">model</td>
+                                    <td class="py-2 px-3">string</td>
+                                    <td class="py-2 px-3">✅</td>
+                                    <td class="py-2 px-3">模型名称，如 MiniMax-M2.5</td>
+                                </tr>
+                                <tr class="border-t">
+                                    <td class="py-2 px-3 font-mono">messages</td>
+                                    <td class="py-2 px-3">array</td>
+                                    <td class="py-2 px-3">✅</td>
+                                    <td class="py-2 px-3">消息数组，每条包含 role 和 content</td>
+                                </tr>
+                                <tr class="border-t">
+                                    <td class="py-2 px-3 font-mono">temperature</td>
+                                    <td class="py-2 px-3">float</td>
+                                    <td class="py-2 px-3">❌</td>
+                                    <td class="py-2 px-3">采样温度 0-2，默认 0.7</td>
+                                </tr>
+                                <tr class="border-t">
+                                    <td class="py-2 px-3 font-mono">max_tokens</td>
+                                    <td class="py-2 px-3">int</td>
+                                    <td class="py-2 px-3">❌</td>
+                                    <td class="py-2 px-3">最大生成 token 数</td>
+                                </tr>
+                                <tr class="border-t">
+                                    <td class="py-2 px-3 font-mono">top_p</td>
+                                    <td class="py-2 px-3">float</td>
+                                    <td class="py-2 px-3">❌</td>
+                                    <td class="py-2 px-3">核采样 0-1，默认 1</td>
+                                </tr>
+                                <tr class="border-t">
+                                    <td class="py-2 px-3 font-mono">stream</td>
+                                    <td class="py-2 px-3">bool</td>
+                                    <td class="py-2 px-3">❌</td>
+                                    <td class="py-2 px-3">是否使用流式输出</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+
+                    <h4 class="font-semibold mb-2">请求示例</h4>
+                    <div class="bg-gray-900 rounded-lg p-4 mb-4">
+                        <pre class="text-green-400 text-sm font-mono">{
+  "model": "MiniMax-M2.5",
+  "messages": [
+    {"role": "system", "content": "你是一个专业的AI助手"},
+    {"role": "user", "content": "请介绍一下人工智能的发展历史"}
+  ],
+  "temperature": 0.7,
+  "max_tokens": 2000
+}</pre>
+                    </div>
+
+                    <h4 class="font-semibold mb-2">响应示例</h4>
+                    <div class="bg-gray-900 rounded-lg p-4">
+                        <pre class="text-green-400 text-sm font-mono">{
+  "id": "chatcmpl-8x7y9z",
+  "object": "chat.completion",
+  "created": 1699999999,
+  "model": "MiniMax-M2.5",
+  "choices": [
+    {
+      "index": 0,
+      "message": {
+        "role": "assistant",
+        "content": "人工智能（Artificial Intelligence）..."
+      },
+      "finish_reason": "stop"
+    }
+  ],
+  "usage": {
+    "prompt_tokens": 50,
+    "completion_tokens": 150,
+    "total_tokens": 200
+  }
+}</pre>
+                    </div>
+                </div>
+
+                <!-- 模型列表 -->
+                <div id="models" class="mb-8">
+                    <h3 class="text-xl font-bold mb-4 border-b pb-2">获取模型列表 /v1/models</h3>
+                    
+                    <div class="flex gap-2 mb-4">
+                        <span class="px-2 py-1 bg-blue-100 text-blue-700 rounded text-sm font-mono">GET</span>
+                        <span class="text-gray-600">/api/v1/models</span>
+                    </div>
+
+                    <h4 class="font-semibold mb-2">响应示例</h4>
+                    <div class="bg-gray-900 rounded-lg p-4">
+                        <pre class="text-green-400 text-sm font-mono">{
+  "object": "list",
+  "data": [
+    {
+      "id": "MiniMax-M2.5",
+      "object": "model",
+      "owned_by": "minimax",
+      "context_window": 200000
+    },
+    {
+      "id": "MiniMax-M2.5-highspeed",
+      "object": "model", 
+      "owned_by": "minimax",
+      "context_window": 200000
+    }
+  ]
+}</pre>
+                    </div>
+                </div>
+
+                <!-- 用量查询 -->
+                <div id="usage">
+                    <h3 class="text-xl font-bold mb-4 border-b pb-2">用量统计 /user/usage</h3>
+                    
+                    <div class="flex gap-2 mb-4">
+                        <span class="px-2 py-1 bg-blue-100 text-blue-700 rounded text-sm font-mono">GET</span>
+                        <span class="text-gray-600">/api/user/usage?api_key=xxx&days=7</span>
+                    </div>
+
+                    <h4 class="font-semibold mb-2">查询参数</h4>
+                    <div class="overflow-x-auto mb-4">
+                        <table class="w-full text-sm">
+                            <thead class="bg-gray-50">
+                                <tr>
+                                    <th class="text-left py-2 px-3">参数</th>
+                                    <th class="text-left py-2 px-3">类型</th>
+                                    <th class="text-left py-2 px-3">说明</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr class="border-t">
+                                    <td class="py-2 px-3 font-mono">api_key</td>
+                                    <td class="py-2 px-3">query</td>
+                                    <td class="py-2 px-3">您的 API Key</td>
+                                </tr>
+                                <tr class="border-t">
+                                    <td class="py-2 px-3 font-mono">days</td>
+                                    <td class="py-2 px-3">query</td>
+                                    <td class="py-2 px-3">查询天数，默认 7</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </section>
+
+            <!-- SDK -->
+            <section id="sdks" class="bg-white rounded-xl shadow-sm p-6 mb-8">
+                <h2 class="text-2xl font-bold mb-4">🛠️ SDK 示例</h2>
+
+                <!-- Python -->
+                <div class="mb-6">
+                    <h3 class="font-semibold mb-2">Python</h3>
+                    <div class="bg-gray-900 rounded-lg p-4">
+                        <pre class="text-green-400 text-sm font-mono"># 使用 OpenAI SDK (需要设置 base_url)
+from openai import OpenAI
+
+client = OpenAI(
+    api_key="YOUR_API_KEY",
+    base_url="http://47.111.4.141:8000/api"
+)
+
+response = client.chat.completions.create(
+    model="MiniMax-M2.5",
+    messages=[
+        {"role": "user", "content": "你好"}
+    ]
+)
+
+print(response.choices[0].message.content)</pre>
+                    </div>
+                </div>
+
+                <!-- JavaScript -->
+                <div class="mb-6">
+                    <h3 class="font-semibold mb-2">JavaScript</h3>
+                    <div class="bg-gray-900 rounded-lg p-4">
+                        <pre class="text-green-400 text-sm font-mono">// 使用 fetch
+const response = await fetch('http://47.111.4.141:8000/api/v1/chat/completions', {
+  method: 'POST',
+  headers: {
+    'Content-Type': 'application/json',
+    'Authorization': 'Bearer YOUR_API_KEY'
+  },
+  body: JSON.stringify({
+    model: 'MiniMax-M2.5',
+    messages: [{role: 'user', content: '你好'}]
+  })
+});
+
+const data = await response.json();
+console.log(data.choices[0].message.content);</pre>
+                    </div>
+                </div>
+
+                <!-- Go -->
+                <div class="mb-6">
+                    <h3 class="font-semibold mb-2">Go</h3>
+                    <div class="bg-gray-900 rounded-lg p-4">
+                        <pre class="text-green-400 text-sm font-mono">package main
+
+import (
+    "bytes"
+    "encoding/json"
+    "net/http"
+)
+
+func main() {
+    url := "http://47.111.4.141:8000/api/v1/chat/completions"
+    
+    data := map[string]interface{}{
+        "model": "MiniMax-M2.5",
+        "messages": []map]string{
+            {"role": "user", "content": "你好"},
+        },
+    }
+    
+    jsonData, _ := json.Marshal(data)
+    
+    req, _ := http.NewRequest("POST", url, bytes.NewBuffer(jsonData))
+    req.Header.Set("Content-Type", "application/json")
+    req.Header.Set("Authorization", "Bearer YOUR_API_KEY")
+    
+    client := &http.Client{}
+    resp, _ := client.Do(req)
+    defer resp.Body.Close()
+}</pre>
+                    </div>
+                </div>
+
+                <!-- Python requests -->
+                <div>
+                    <h3 class="font-semibold mb-2">Python (原生)</h3>
+                    <div class="bg-gray-900 rounded-lg p-4">
+                        <pre class="text-green-400 text-sm font-mono">import requests
+
+url = "http://47.111.4.141:8000/api/v1/chat/completions"
+headers = {
+    "Content-Type": "application/json",
+    "Authorization": "Bearer YOUR_API_KEY"
+}
+
+data = {
+    "model": "MiniMax-M2.5",
+    "messages": [{"role": "user", "content": "你好"}]
+}
+
+response = requests.post(url, json=data, headers=headers)
+print(response.json()["choices"][0]["message"]["content"])</pre>
+                    </div>
+                </div>
+            </section>
+
+            <!-- 错误码 -->
+            <section id="errors" class="bg-white rounded-xl shadow-sm p-6 mb-8">
+                <h2 class="text-2xl font-bold mb-4">⚠️ 错误码</h2>
+
+                <div class="overflow-x-auto">
+                    <table class="w-full text-sm">
+                        <thead class="bg-gray-50">
+                            <tr>
+                                <th class="text-left py-2 px-3">HTTP 状态码</th>
+                                <th class="text-left py-2 px-3">错误码</th>
+                                <th class="text-left py-2 px-3">说明</th>
+                                <th class="text-left py-2 px-3">解决方案</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr class="border-t">
+                                <td class="py-2 px-3 font-mono">200</td>
+                                <td class="py-2 px-3">-</td>
+                                <td class="py-2 px-3">请求成功</td>
+                                <td class="py-2 px-3">-</td>
+                            </tr>
+                            <tr class="border-t">
+                                <td class="py-2 px-3 font-mono">400</td>
+                                <td class="py-2 px-3">invalid_request_error</td>
+                                <td class="py-2 px-3">请求参数错误</td>
+                                <td class="py-2 px-3">检查请求参数格式</td>
+                            </tr>
+                            <tr class="border-t">
+                                <td class="py-2 px-3 font-mono">401</td>
+                                <td class="py-2 px-3">invalid_api_key</td>
+                                <td class="py-2 px-3">API Key 无效</td>
+                                <td class="py-2 px-3">检查 API Key 是否正确</td>
+                            </tr>
+                            <tr class="border-t">
+                                <td class="py-2 px-3 font-mono">403</td>
+                                <td class="py-2 px-3">access_denied</td>
+                                <td class="py-2 px-3">账户已被禁用</td>
+                                <td class="py-2 px-3">联系客服</td>
+                            </tr>
+                            <tr class="border-t">
+                                <td class="py-2 px-3 font-mono">413</td>
+                                <td class="py-2 px-3">context_length_exceeded</td>
+                                <td class="py-2 px-3">输入超出模型上下文限制</td>
+                                <td class="py-2 px-3">减少输入内容或使用更长的模型</td>
+                            </tr>
+                            <tr class="border-t">
+                                <td class="py-2 px-3 font-mono">429</td>
+                                <td class="py-2 px-3">rate_limit_exceeded</td>
+                                <td class="py-2 px-3">请求过于频繁</td>
+                                <td class="py-2 px-3">稍后重试或升级套餐</td>
+                            </tr>
+                            <tr class="border-t">
+                                <td class="py-2 px-3 font-mono">500</td>
+                                <td class="py-2 px-3">server_error</td>
+                                <td class="py-2 px-3">服务器内部错误</td>
+                                <td class="py-2 px-3">稍后重试</td>
+                            </tr>
+                            <tr class="border-t">
+                                <td class="py-2 px-3 font-mono">502</td>
+                                <td class="py-2 px-3">bad_gateway</td>
+                                <td class="py-2 px-3">上游服务错误</td>
+                                <td class="py-2 px-3">稍后重试</td>
+                            </tr>
+                            <tr class="border-t">
+                                <td class="py-2 px-3 font-mono">503</td>
+                                <td class="py-2 px-3">service_unavailable</td>
+                                <td class="py-2 px-3">服务暂不可用</td>
+                                <td class="py-2 px-3">稍后重试</td>
+                            </tr>
+                            <tr class="border-t">
+                                <td class="py-2 px-3 font-mono">504</td>
+                                <td class="py-2 px-3">gateway_timeout</td>
+                                <td class="py-2 px-3">AI 服务响应超时</td>
+                                <td class="py-2 px-3">减少 max_tokens 或稍后重试</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </section>
+
+            <!-- 限制说明 -->
+            <section id="limits" class="bg-white rounded-xl shadow-sm p-6 mb-8">
+                <h2 class="text-2xl font-bold mb-4">📊 限制说明</h2>
+
+                <div class="grid md:grid-cols-2 gap-6">
+                    <div>
+                        <h3 class="font-semibold mb-2">速率限制</h3>
+                        <table class="w-full text-sm">
+                            <tbody>
+                                <tr class="border-b">
+                                    <td class="py-2">免费用户</td>
+                                    <td class="py-2 text-right">60 次/分钟</td>
+                                </tr>
+                                <tr class="border-b">
+                                    <td class="py-2">基础版</td>
+                                    <td class="py-2 text-right">120 次/分钟</td>
+                                </tr>
+                                <tr>
+                                    <td class="py-2">专业版</td>
+                                    <td class="py-2 text-right">300 次/分钟</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                    
+                    <div>
+                        <h3 class="font-semibold mb-2">模型限制</h3>
+                        <table class="w-full text-sm">
+                            <tbody>
+                                <tr class="border-b">
+                                    <td class="py-2">最大输入</td>
+                                    <td class="py-2 text-right">200K tokens</td>
+                                </tr>
+                                <tr class="border-b">
+                                    <td class="py-2">最大输出</td>
+                                    <td class="py-2 text-right">8K tokens</td>
+                                </tr>
+                                <tr>
+                                    <td class="py-2">流式输出</td>
+                                    <td class="py-2 text-right">✅ 支持</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </section>
+
+            <!-- 最佳实践 -->
+            <section id="bestpractice" class="bg-white rounded-xl shadow-sm p-6 mb-8">
+                <h2 class="text-2xl font-bold mb-4">💡 最佳实践</h2>
+
+                <div class="space-y-4">
+                    <div class="border rounded-lg p-4">
+                        <h3 class="font-semibold mb-2">1. 使用流式输出</h3>
+                        <p class="text-sm text-gray-600 mb-2">对于长文本生成，使用 stream: true 可以提前看到输出，提升用户体验。</p>
+                        <div class="bg-gray-900 rounded p-3">
+                            <pre class="text-green-400 text-xs font-mono">{"stream": true, ...}</pre>
+                        </div>
+                    </div>
+
+                    <div class="border rounded-lg p-4">
+                        <h3 class="font-semibold mb-2">2. 合理设置 max_tokens</h3>
+                        <p class="text-sm text-gray-600">根据实际需求设置，避免无谓的资源消耗。</p>
+                    </div>
+
+                    <div class="border rounded-lg p-4">
+                        <h3 class="font-semibold mb-2">3. 使用系统消息</h3>
+                        <p class="text-sm text-gray-600 mb-2">通过 system 消息设定 AI 角色和行为，可以获得更稳定的输出。</p>
+                        <div class="bg-gray-900 rounded p-3">
+                            <pre class="text-green-400 text-xs font-mono">{"role": "system", "content": "你是一个专业的..."}</pre>
+                        </div>
+                    </div>
+
+                    <div class="border rounded-lg p-4">
+                        <h3 class="font-semibold mb-2">4. 实现重试机制</h3>
+                        <p class="text-sm text-gray-600">网络可能不稳定，建议实现指数退避重试。</p>
+                    </div>
+
+                    <div class="border rounded-lg p-4">
+                        <h3 class="font-semibold mb-2">5. 缓存常见请求</h3>
+                        <p class="text-sm text-gray-600">对于相同的输入，可以缓存结果减少 API 调用。</p>
+                    </div>
+                </div>
+            </section>
+
+            <!-- 联系支持 -->
+            <section class="bg-gradient-to-r from-blue-600 to-purple-600 rounded-xl p-8 text-white">
+                <h2 class="text-2xl font-bold mb-4">需要帮助？</h2>
+                <p class="opacity-90 mb-4">如果您在使用过程中遇到任何问题，请随时联系我们。</p>
+                <div class="flex gap-4">
+                    <a href="mailto:support@artinsmart.cn" class="px-4 py-2 bg-white text-blue-600 rounded-lg hover:bg-gray-100">
+                        <i class="fas fa-envelope mr-2"></i>发送邮件
+                    </a>
+                    <a href="/pricing.html" class="px-4 py-2 border border-white rounded-lg hover:bg-white/10">
+                        查看定价
+                    </a>
+                </div>
+            </section>
+        </main>
+    </div>
+
+    <!-- Footer -->
+    <footer class="bg-gray-900 text-white py-8 mt-8">
+        <div class="max-w-7xl mx-auto px-4 text-center">
+            <p class="text-gray-400">© 2026 ArtinSmart. All rights reserved.</p>
+        </div>
+    </footer>
+
+    <script>
+        function copyCode(btn) {
+            const code = btn.parentElement.nextElementSibling.textContent;
+            navigator.clipboard.writeText(code);
+            btn.innerHTML = '<i class="fas fa-check"></i> 已复制';
+            setTimeout(() => {
+                btn.innerHTML = '<i class="fas fa-copy"></i> 复制';
+            }, 2000);
+        }
+        
+        // Active sidebar highlight
+        const sections = document.querySelectorAll('section[id]');
+        const sidebarItems = document.querySelectorAll('.sidebar-item');
+        
+        window.addEventListener('scroll', () => {
+            let current = '';
+            sections.forEach(section => {
+                const sectionTop = section.offsetTop - 100;
+                if (window.scrollY >= sectionTop) {
+                    current = section.getAttribute('id');
+                }
+            });
+            
+            sidebarItems.forEach(item => {
+                item.classList.remove('active');
+                if (item.getAttribute('href') === '#' + current) {
+                    item.classList.add('active');
+                }
+            });
+        });
+    </script>
+</body>
+</html>

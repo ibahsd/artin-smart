@@ -1,0 +1,362 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>登录 - ArtinSmart</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        .gradient-bg { background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); }
+    </style>
+</head>
+<body class="gradient-bg min-h-screen flex items-center justify-center p-4">
+    <div class="bg-white rounded-2xl shadow-2xl w-full max-w-md overflow-hidden">
+        <!-- Header -->
+        <div class="bg-gradient-to-r from-blue-600 to-purple-600 p-6 text-center">
+            <h1 class="text-2xl font-bold text-white">ArtinSmart</h1>
+            <p class="text-white/80 text-sm">AI API 中转平台</p>
+        </div>
+
+        <!-- Tab -->
+        <div class="flex border-b">
+            <button id="tab-login" onclick="switchTab('login')" class="flex-1 py-4 text-center font-medium border-b-2 border-blue-500 text-blue-600">
+                登录
+            </button>
+            <button id="tab-register" onclick="switchTab('register')" class="flex-1 py-4 text-center font-medium text-gray-400">
+                注册
+            </button>
+        </div>
+
+        <div class="p-6">
+            <!-- Message -->
+            <div id="message" class="mb-4 p-3 rounded-lg text-sm hidden"></div>
+
+            <!-- Login Form -->
+            <div id="form-login">
+                <!-- 登录类型 -->
+                <div class="mb-4">
+                    <label class="block text-sm font-medium text-gray-700 mb-2">登录方式</label>
+                    <div class="flex gap-2">
+                        <button type="button" onclick="setLoginType('email')" id="login-email-btn" 
+                            class="flex-1 py-2 rounded-lg border-2 border-blue-500 bg-blue-50 text-blue-600 font-medium">
+                            邮箱
+                        </button>
+                        <button type="button" onclick="setLoginType('phone')" id="login-phone-btn"
+                            class="flex-1 py-2 rounded-lg border-2 border-gray-200 text-gray-600">
+                            手机
+                        </button>
+                    </div>
+                </div>
+
+                <!-- 账号 -->
+                <div class="mb-4">
+                    <label class="block text-sm font-medium text-gray-700 mb-1" id="login-target-label">邮箱地址</label>
+                    <input type="text" id="login-target" 
+                        class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500"
+                        placeholder="请输入邮箱地址">
+                </div>
+
+                <!-- 密码登录 -->
+                <div class="mb-4">
+                    <label class="block text-sm font-medium text-gray-700 mb-1">密码</label>
+                    <input type="password" id="login-password" 
+                        class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500"
+                        placeholder="请输入密码">
+                </div>
+
+                <!-- 登录按钮 -->
+                <button type="button" onclick="doLogin()" 
+                    class="w-full bg-blue-600 text-white py-3 rounded-lg font-medium hover:bg-blue-700">
+                    登录
+                </button>
+            </div>
+
+            <!-- Register Form -->
+            <div id="form-register" class="hidden">
+                <!-- 注册类型 -->
+                <div class="mb-4">
+                    <label class="block text-sm font-medium text-gray-700 mb-2">注册方式</label>
+                    <div class="flex gap-2">
+                        <button type="button" onclick="setRegisterType('email')" id="reg-email-btn"
+                            class="flex-1 py-2 rounded-lg border-2 border-blue-500 bg-blue-50 text-blue-600 font-medium">
+                            邮箱
+                        </button>
+                        <button type="button" onclick="setRegisterType('phone')" id="reg-phone-btn"
+                            class="flex-1 py-2 rounded-lg border-2 border-gray-200 text-gray-600">
+                            手机
+                        </button>
+                    </div>
+                </div>
+
+                <!-- 账号 -->
+                <div class="mb-4">
+                    <label class="block text-sm font-medium text-gray-700 mb-1" id="reg-target-label">邮箱地址</label>
+                    <input type="text" id="reg-target" 
+                        class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500"
+                        placeholder="请输入邮箱地址">
+                </div>
+
+                <!-- 验证码 -->
+                <div class="mb-4">
+                    <label class="block text-sm font-medium text-gray-700 mb-1">验证码</label>
+                    <div class="flex gap-2">
+                        <input type="text" id="reg-code" 
+                            class="flex-1 px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500"
+                            placeholder="请输入验证码">
+                        <button type="button" onclick="sendRegCode()" id="reg-send-btn"
+                            class="px-4 py-2 bg-gray-100 text-gray-600 rounded-lg font-medium">
+                            发送验证码
+                        </button>
+                    </div>
+                </div>
+
+                <!-- 密码 -->
+                <div class="mb-4">
+                    <label class="block text-sm font-medium text-gray-700 mb-1">设置密码</label>
+                    <input type="password" id="reg-password" 
+                        class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500"
+                        placeholder="请设置密码（6-20位）">
+                </div>
+
+                <!-- 确认密码 -->
+                <div class="mb-4">
+                    <label class="block text-sm font-medium text-gray-700 mb-1">确认密码</label>
+                    <input type="password" id="reg-confirm" 
+                        class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500"
+                        placeholder="请再次输入密码">
+                </div>
+
+                <!-- 注册按钮 -->
+                <button type="button" onclick="doRegister()" 
+                    class="w-full bg-blue-600 text-white py-3 rounded-lg font-medium hover:bg-blue-700">
+                    注册
+                </button>
+            </div>
+        </div>
+
+        <!-- Footer -->
+        <div class="bg-gray-50 p-4 text-center text-sm text-gray-600">
+            <span id="footer-text">已有账号？</span>
+            <a href="javascript:void(0)" onclick="switchTab('register')" id="footer-link" class="text-blue-600 hover:underline">立即注册</a>
+        </div>
+    </div>
+
+    <script>
+        const API_BASE = 'http://47.111.4.141:8000';
+        let loginType = 'email';
+        let registerType = 'email';
+        let regCountdown = 0;
+
+        // 切换 Tab
+        function switchTab(tab) {
+            document.getElementById('form-login').className = tab === 'login' ? '' : 'hidden';
+            document.getElementById('form-register').className = tab === 'register' ? '' : 'hidden';
+            
+            document.getElementById('tab-login').className = tab === 'login' 
+                ? 'flex-1 py-4 text-center font-medium border-b-2 border-blue-500 text-blue-600'
+                : 'flex-1 py-4 text-center font-medium text-gray-400';
+            document.getElementById('tab-register').className = tab === 'register' 
+                ? 'flex-1 py-4 text-center font-medium border-b-2 border-blue-500 text-blue-600'
+                : 'flex-1 py-4 text-center font-medium text-gray-400';
+            
+            document.getElementById('footer-text').textContent = tab === 'login' ? '已有账号？' : '还没有账号？';
+            document.getElementById('footer-link').textContent = tab === 'login' ? '立即注册' : '立即登录';
+            document.getElementById('footer-link').onclick = tab === 'login' 
+                ? () => switchTab('register') 
+                : () => switchTab('login');
+            
+            hideMessage();
+        }
+
+        // 登录类型
+        function setLoginType(type) {
+            loginType = type;
+            const isEmail = type === 'email';
+            document.getElementById('login-target-label').textContent = isEmail ? '邮箱地址' : '手机号码';
+            document.getElementById('login-target').placeholder = isEmail ? '请输入邮箱地址' : '请输入手机号码';
+            
+            document.getElementById('login-email-btn').className = isEmail 
+                ? 'flex-1 py-2 rounded-lg border-2 border-blue-500 bg-blue-50 text-blue-600 font-medium'
+                : 'flex-1 py-2 rounded-lg border-2 border-gray-200 text-gray-600';
+            document.getElementById('login-phone-btn').className = !isEmail 
+                ? 'flex-1 py-2 rounded-lg border-2 border-blue-500 bg-blue-50 text-blue-600 font-medium'
+                : 'flex-1 py-2 rounded-lg border-2 border-gray-200 text-gray-600';
+        }
+
+        // 注册类型
+        function setRegisterType(type) {
+            registerType = type;
+            const isEmail = type === 'email';
+            document.getElementById('reg-target-label').textContent = isEmail ? '邮箱地址' : '手机号码';
+            document.getElementById('reg-target').placeholder = isEmail ? '请输入邮箱地址' : '请输入手机号码';
+            
+            document.getElementById('reg-email-btn').className = isEmail 
+                ? 'flex-1 py-2 rounded-lg border-2 border-blue-500 bg-blue-50 text-blue-600 font-medium'
+                : 'flex-1 py-2 rounded-lg border-2 border-gray-200 text-gray-600';
+            document.getElementById('reg-phone-btn').className = !isEmail 
+                ? 'flex-1 py-2 rounded-lg border-2 border-blue-500 bg-blue-50 text-blue-600 font-medium'
+                : 'flex-1 py-2 rounded-lg border-2 border-gray-200 text-gray-600';
+        }
+
+        // 发送注册验证码
+        async function sendRegCode() {
+            if (regCountdown > 0) return;
+            
+            const target = document.getElementById('reg-target').value.trim();
+            if (!target) {
+                showMessage(registerType === 'email' ? '请输入邮箱地址' : '请输入手机号码', 'error');
+                return;
+            }
+
+            try {
+                const res = await fetch(API_BASE + '/api/auth/send-code', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ target, type: registerType })
+                });
+                const data = await res.json();
+                
+                if (data.success) {
+                    showMessage('验证码已发送（验证码：' + data.debug_code + '）', 'success');
+                    startRegCountdown();
+                } else {
+                    showMessage(data.detail || '发送失败', 'error');
+                }
+            } catch (e) {
+                showMessage('网络错误', 'error');
+            }
+        }
+
+        function startRegCountdown() {
+            regCountdown = 60;
+            const btn = document.getElementById('reg-send-btn');
+            const timer = setInterval(() => {
+                regCountdown--;
+                btn.textContent = regCountdown > 0 ? regCountdown + 's' : '发送验证码';
+                if (regCountdown <= 0) clearInterval(timer);
+            }, 1000);
+        }
+
+        // 执行登录
+        async function doLogin() {
+            const target = document.getElementById('login-target').value.trim();
+            const password = document.getElementById('login-password').value;
+
+            if (!target) {
+                showMessage('请输入账号', 'error');
+                return;
+            }
+            if (!password) {
+                showMessage('请输入密码', 'error');
+                return;
+            }
+
+            try {
+                const res = await fetch(API_BASE + '/api/login', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        email: loginType === 'email' ? target : '',
+                        phone: loginType === 'phone' ? target : '',
+                        password: password
+                    })
+                });
+                const data = await res.json();
+                
+                if (data.api_key) {
+                    localStorage.setItem('artin_user', JSON.stringify({ 
+                        email: target, 
+                        credits: data.user?.credits || 5 
+                    }));
+                    localStorage.setItem('artin_api_key', data.api_key);
+                    
+                    showMessage('登录成功，正在跳转...', 'success');
+                    setTimeout(() => window.location.href = '/dashboard.html', 1000);
+                } else {
+                    showMessage(data.detail || '登录失败', 'error');
+                }
+            } catch (e) {
+                showMessage('网络错误', 'error');
+            }
+        }
+
+        // 执行注册
+        async function doRegister() {
+            const target = document.getElementById('reg-target').value.trim();
+            const code = document.getElementById('reg-code').value.trim();
+            const password = document.getElementById('reg-password').value;
+            const confirm = document.getElementById('reg-confirm').value;
+
+            if (!target) {
+                showMessage('请输入账号', 'error');
+                return;
+            }
+            if (!code) {
+                showMessage('请输入验证码', 'error');
+                return;
+            }
+            if (!password || password.length < 6) {
+                showMessage('请设置密码（至少6位）', 'error');
+                return;
+            }
+            if (password !== confirm) {
+                showMessage('两次密码不一致', 'error');
+                return;
+            }
+
+            try {
+                // 先验证验证码
+                const verifyRes = await fetch(API_BASE + '/api/auth/verify-code', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ target, code, type: registerType })
+                });
+                const verifyData = await verifyRes.json();
+                
+                if (!verifyData.success) {
+                    showMessage('验证码错误', 'error');
+                    return;
+                }
+
+                // 注册
+                const regRes = await fetch(API_BASE + '/api/register', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        email: registerType === 'email' ? target : '',
+                        phone: registerType === 'phone' ? target : '',
+                        password: password
+                    })
+                });
+                
+                const regData = await regRes.json();
+                
+                if (regData.id || regData.api_key) {
+                    localStorage.setItem('artin_user', JSON.stringify({ 
+                        email: target, 
+                        credits: regData.credits || 5 
+                    }));
+                    localStorage.setItem('artin_api_key', regData.api_key);
+                    
+                    showMessage('注册成功！正在跳转...', 'success');
+                    setTimeout(() => window.location.href = '/dashboard.html', 1000);
+                } else {
+                    showMessage(regData.detail || '注册失败', 'error');
+                }
+            } catch (e) {
+                showMessage('网络错误', 'error');
+            }
+        }
+
+        function showMessage(msg, type) {
+            const el = document.getElementById('message');
+            el.textContent = msg;
+            el.className = 'mb-4 p-3 rounded-lg text-sm ' + (type === 'success' ? 'bg-green-100 text-green-700' : 'bg-red-100 text-red-700');
+        }
+
+        function hideMessage() {
+            document.getElementById('message').className = 'mb-4 p-3 rounded-lg text-sm hidden';
+        }
+    </script>
+</body>
+</html>

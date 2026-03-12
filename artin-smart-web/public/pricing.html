@@ -1,0 +1,164 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>定价 - ArtinSmart</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="bg-gray-50">
+    <!-- Header -->
+    <header class="bg-white shadow-sm sticky top-0 z-50">
+        <div class="max-w-7xl mx-auto px-4 py-4 flex justify-between items-center">
+            <a href="/" class="text-xl font-bold text-blue-600">ArtinSmart</a>
+            <nav class="hidden md:flex gap-6">
+                <a href="/" class="text-gray-600 hover:text-blue-600">首页</a>
+                <a href="/pricing.html" class="text-blue-600 font-medium">定价</a>
+                <a href="/api-docs.html" class="text-gray-600 hover:text-blue-600">文档</a>
+            </nav>
+            <div class="flex gap-3">
+                <a href="/auth.html" class="px-4 py-2 text-gray-600 hover:text-blue-600">登录</a>
+                <a href="/auth.html" class="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700">立即开始</a>
+            </div>
+        </div>
+    </header>
+
+    <div class="max-w-7xl mx-auto px-4 py-12">
+        <div class="text-center mb-12">
+            <h1 class="text-4xl font-bold text-gray-900 mb-4">简单透明的定价</h1>
+            <p class="text-xl text-gray-600">按量计费，用多少付多少</p>
+        </div>
+
+        <!-- 按量计费 -->
+        <div class="mb-12">
+            <h2 class="text-2xl font-bold text-center mb-8">按量计费</h2>
+            <div class="grid md:grid-cols-2 gap-6 max-w-4xl mx-auto">
+                <div class="bg-white rounded-xl shadow-sm p-6 border-t-4 border-blue-500">
+                    <h3 class="text-xl font-semibold mb-2">MiniMax M2.5</h3>
+                    <p class="text-gray-500 text-sm mb-4">适合大多数场景</p>
+                    <div class="text-3xl font-bold text-gray-900 mb-4">
+                        ¥0.008<span class="text-lg font-normal text-gray-500">/K 输入</span>
+                    </div>
+                    <div class="text-3xl font-bold text-gray-900 mb-6">
+                        ¥0.01<span class="text-lg font-normal text-gray-500">/K 输出</span>
+                    </div>
+                    <ul class="text-sm text-gray-600 space-y-2">
+                        <li>✓ 200K 上下文</li>
+                        <li>✓ 支持流式输出</li>
+                        <li>✓ 国内高速节点</li>
+                    </ul>
+                </div>
+                
+                <div class="bg-white rounded-xl shadow-sm p-6 border-t-4 border-purple-500">
+                    <div class="flex justify-between items-center mb-2">
+                        <h3 class="text-xl font-semibold">MiniMax M2.5 高速版</h3>
+                        <span class="px-2 py-1 bg-green-100 text-green-700 text-xs rounded">推荐</span>
+                    </div>
+                    <p class="text-gray-500 text-sm mb-4">适合高并发场景</p>
+                    <div class="text-3xl font-bold text-gray-900 mb-4">
+                        ¥0.01<span class="text-lg font-normal text-gray-500">/K 输入</span>
+                    </div>
+                    <div class="text-3xl font-bold text-gray-900 mb-6">
+                        ¥0.012<span class="text-lg font-normal text-gray-500">/K 输出</span>
+                    </div>
+                    <ul class="text-sm text-gray-600 space-y-2">
+                        <li>✓ 100 TPS 并发</li>
+                        <li>✓ 200K 上下文</li>
+                        <li>✓ 最低延迟</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+
+        <!-- 套餐 -->
+        <div class="mb-12">
+            <h2 class="text-2xl font-bold text-center mb-8">订阅套餐</h2>
+            <div class="grid md:grid-cols-3 gap-6 max-w-5xl mx-auto">
+                <!-- 体验版 -->
+                <div class="bg-white rounded-xl shadow-sm p-6 border-2 border-gray-100">
+                    <h3 class="text-xl font-semibold mb-2">体验版</h3>
+                    <div class="text-4xl font-bold text-gray-900 mb-2">¥0<span class="text-lg font-normal text-gray-500">/周</span></div>
+                    <p class="text-gray-500 text-sm mb-6">适合体验测试</p>
+                    
+                    <ul class="text-sm text-gray-600 space-y-3 mb-6">
+                        <li>✓ 10万 tokens</li>
+                        <li>✓ 所有模型</li>
+                        <li>✓ 基础客服</li>
+                    </ul>
+                    
+                    <a href="/auth.html" class="block text-center py-2 border border-gray-300 rounded-lg hover:bg-gray-50">免费注册</a>
+                </div>
+                
+                <!-- 基础版 -->
+                <div class="bg-white rounded-xl shadow-sm p-6 border-2 border-blue-500 relative">
+                    <div class="absolute top-0 left-1/2 transform -translate-x-1/2 -translate-y-1/2">
+                        <span class="bg-blue-600 text-white px-4 py-1 rounded-full text-sm">最受欢迎</span>
+                    </div>
+                    <h3 class="text-xl font-semibold mb-2">基础版</h3>
+                    <div class="text-4xl font-bold text-gray-900 mb-2">¥15<span class="text-lg font-normal text-gray-500">/月</span></div>
+                    <p class="text-gray-500 text-sm mb-6">适合个人开发者</p>
+                    
+                    <ul class="text-sm text-gray-600 space-y-3 mb-6">
+                        <li>✓ 40万 tokens</li>
+                        <li>✓ 所有模型</li>
+                        <li>✓ 优先客服</li>
+                        <li>✓ 用量统计</li>
+                    </ul>
+                    
+                    <a href="/auth.html" class="block text-center py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700">立即订阅</a>
+                </div>
+                
+                <!-- 专业版 -->
+                <div class="bg-white rounded-xl shadow-sm p-6 border-2 border-gray-100">
+                    <h3 class="text-xl font-semibold mb-2">专业版</h3>
+                    <div class="text-4xl font-bold text-gray-900 mb-2">¥39<span class="text-lg font-normal text-gray-500">/月</span></div>
+                    <p class="text-gray-500 text-sm mb-6">适合团队/企业</p>
+                    
+                    <ul class="text-sm text-gray-600 space-y-3 mb-6">
+                        <li>✓ 100万 tokens</li>
+                        <li>✓ 所有模型</li>
+                        <li>✓ 专属客服</li>
+                        <li>✓ 用量统计</li>
+                        <li>✓ API 优先权</li>
+                    </ul>
+                    
+                    <a href="/auth.html" class="block text-center py-2 border border-gray-300 rounded-lg hover:bg-gray-50">立即订阅</a>
+                </div>
+            </div>
+        </div>
+
+        <!-- FAQ -->
+        <div>
+            <h2 class="text-2xl font-bold text-center mb-8">常见问题</h2>
+            <div class="max-w-3xl mx-auto space-y-4">
+                <div class="bg-white rounded-lg shadow-sm p-6">
+                    <h3 class="font-semibold mb-2">Q: 如何获取 API Key？</h3>
+                    <p class="text-gray-600 text-sm">A: 注册账号后，在控制台即可查看您的 API Key。</p>
+                </div>
+                
+                <div class="bg-white rounded-lg shadow-sm p-6">
+                    <h3 class="font-semibold mb-2">Q: 余额可以退吗？</h3>
+                    <p class="text-gray-600 text-sm">A: 未使用的余额可以申请退款，请联系客服。</p>
+                </div>
+                
+                <div class="bg-white rounded-lg shadow-sm p-6">
+                    <h3 class="font-semibold mb-2">Q: 可以开发票吗？</h3>
+                    <p class="text-gray-600 text-sm">A: 可以，请在控制台申请电子发票。</p>
+                </div>
+                
+                <div class="bg-white rounded-lg shadow-sm p-6">
+                    <h3 class="font-semibold mb-2">Q: 有企业优惠吗？</h3>
+                    <p class="text-gray-600 text-sm">A: 有的，充值金额超过 1000 元可享受折扣，请联系客服。</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Footer -->
+    <footer class="bg-gray-900 text-white py-8">
+        <div class="max-w-7xl mx-auto px-4 text-center">
+            <p class="text-gray-400">© 2026 ArtinSmart. All rights reserved.</p>
+        </div>
+    </footer>
+</body>
+</html>
