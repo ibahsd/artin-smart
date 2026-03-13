@@ -168,7 +168,7 @@
             hideMessage();
         }
 
-        // 登录类型
+        // 登录类型切换
         function setLoginType(type) {
             loginType = type;
             const isEmail = type === 'email';
@@ -183,7 +183,7 @@
                 : 'flex-1 py-2 rounded-lg border-2 border-gray-200 text-gray-600';
         }
 
-        // 注册类型
+        // 注册类型切换
         function setRegisterType(type) {
             registerType = type;
             const isEmail = type === 'email';
@@ -230,10 +230,16 @@
         function startRegCountdown() {
             regCountdown = 60;
             const btn = document.getElementById('reg-send-btn');
+            btn.textContent = regCountdown + 's';
+            btn.classList.add('cursor-not-allowed', 'opacity-50');
+            
             const timer = setInterval(() => {
                 regCountdown--;
                 btn.textContent = regCountdown > 0 ? regCountdown + 's' : '发送验证码';
-                if (regCountdown <= 0) clearInterval(timer);
+                if (regCountdown <= 0) {
+                    clearInterval(timer);
+                    btn.classList.remove('cursor-not-allowed', 'opacity-50');
+                }
             }, 1000);
         }
 
@@ -250,6 +256,12 @@
                 showMessage('请输入密码', 'error');
                 return;
             }
+
+            // 显示加载状态
+            const btn = document.querySelector('#form-login button[onclick="doLogin()"]');
+            const originalText = btn.textContent;
+            btn.textContent = '登录中...';
+            btn.disabled = true;
 
             try {
                 const res = await fetch(API_BASE + '/api/login', {
@@ -274,9 +286,13 @@
                     setTimeout(() => window.location.href = '/dashboard.html', 1000);
                 } else {
                     showMessage(data.detail || '登录失败', 'error');
+                    btn.textContent = originalText;
+                    btn.disabled = false;
                 }
             } catch (e) {
-                showMessage('网络错误', 'error');
+                showMessage('网络错误: ' + e.message, 'error');
+                btn.textContent = originalText;
+                btn.disabled = false;
             }
         }
 
@@ -304,6 +320,12 @@
                 return;
             }
 
+            // 显示加载状态
+            const btn = document.querySelector('#form-register button[onclick="doRegister()"]');
+            const originalText = btn.textContent;
+            btn.textContent = '注册中...';
+            btn.disabled = true;
+
             try {
                 // 先验证验证码
                 const verifyRes = await fetch(API_BASE + '/api/auth/verify-code', {
@@ -315,6 +337,8 @@
                 
                 if (!verifyData.success) {
                     showMessage('验证码错误', 'error');
+                    btn.textContent = originalText;
+                    btn.disabled = false;
                     return;
                 }
 
@@ -342,20 +366,29 @@
                     setTimeout(() => window.location.href = '/dashboard.html', 1000);
                 } else {
                     showMessage(regData.detail || '注册失败', 'error');
+                    btn.textContent = originalText;
+                    btn.disabled = false;
                 }
             } catch (e) {
-                showMessage('网络错误', 'error');
+                showMessage('网络错误: ' + e.message, 'error');
+                btn.textContent = originalText;
+                btn.disabled = false;
             }
         }
 
+        // 显示消息
         function showMessage(msg, type) {
             const el = document.getElementById('message');
             el.textContent = msg;
-            el.className = 'mb-4 p-3 rounded-lg text-sm ' + (type === 'success' ? 'bg-green-100 text-green-700' : 'bg-red-100 text-red-700');
+            el.className = 'mb-4 p-3 rounded-lg text-sm ' + (type === 'success' 
+                ? 'bg-green-100 text-green-700' 
+                : 'bg-red-100 text-red-700');
+            el.classList.remove('hidden');
         }
 
+        // 隐藏消息
         function hideMessage() {
-            document.getElementById('message').className = 'mb-4 p-3 rounded-lg text-sm hidden';
+            document.getElementById('message').classList.add('hidden');
         }
     </script>
 </body>
