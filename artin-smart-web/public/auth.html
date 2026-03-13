@@ -217,7 +217,7 @@
                 const data = await res.json();
                 
                 if (data.success) {
-                    showMessage('验证码已发送（验证码：' + data.debug_code + '）', 'success');
+                    showMessage(data.message || '验证码已发送', 'success');
                     startRegCountdown();
                 } else {
                     showMessage(data.detail || '发送失败', 'error');

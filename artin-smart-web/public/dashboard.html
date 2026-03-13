@@ -212,6 +212,46 @@
         </div>
     </div>
 
+    <!-- Recharge Modal -->
+    <div id="modal-recharge" class="fixed inset-0 bg-black/50 hidden items-center justify-center z-50">
+        <div class="bg-white rounded-xl shadow-xl max-w-md w-full mx-4 p-6">
+            <h3 class="text-xl font-bold text-gray-900 mb-4">账户充值</h3>
+            
+            <div class="mb-4">
+                <label class="block text-sm font-medium text-gray-700 mb-2">选择充值金额</label>
+                <div class="grid grid-cols-3 gap-2">
+                    <button onclick="selectAmount(10)" class="recharge-amount py-3 border-2 border-blue-500 bg-blue-50 rounded-lg font-medium" data-amount="10">¥10</button>
+                    <button onclick="selectAmount(30)" class="recharge-amount py-3 border-2 border-gray-200 rounded-lg hover:border-gray-300" data-amount="30">¥30</button>
+                    <button onclick="selectAmount(50)" class="recharge-amount py-3 border-2 border-gray-200 rounded-lg hover:border-gray-300" data-amount="50">¥50</button>
+                    <button onclick="selectAmount(100)" class="recharge-amount py-3 border-2 border-gray-200 rounded-lg hover:border-gray-300" data-amount="100">¥100</button>
+                    <button onclick="selectAmount(200)" class="recharge-amount py-3 border-2 border-gray-200 rounded-lg hover:border-gray-300" data-amount="200">¥200</button>
+                    <button onclick="selectAmount(500)" class="recharge-amount py-3 border-2 border-gray-200 rounded-lg hover:border-gray-300" data-amount="500">¥500</button>
+                </div>
+            </div>
+            
+            <div class="mb-4">
+                <label class="block text-sm font-medium text-gray-700 mb-2">或输入自定义金额</label>
+                <div class="relative">
+                    <span class="absolute left-4 top-1/2 -translate-y-1/2 text-gray-500">¥</span>
+                    <input type="number" id="custom-amount" min="1" placeholder="最低1元" class="w-full pl-8 pr-4 py-3 border border-gray-300 rounded-lg">
+                </div>
+            </div>
+            
+            <div class="bg-yellow-50 border border-yellow-200 rounded-lg p-3 mb-4">
+                <p class="text-sm text-yellow-800"><i class="fas fa-info-circle mr-1"></i>支付功能正在开发中，敬请期待！</p>
+            </div>
+            
+            <div class="flex gap-3">
+                <button onclick="closeRecharge()" class="flex-1 py-2 border border-gray-300 rounded-lg hover:bg-gray-50">取消</button>
+                <button onclick="confirmRecharge()" class="flex-1 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700" disabled>立即充值（暂不可用）</button>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <!-- Chart.js -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    
     <script>
         const API_BASE = 'http://47.111.4.141:8000';
         let auth = null;
@@ -238,7 +278,7 @@
             const apiKey = localStorage.getItem('artin_api_key');
             
             if (!user || !apiKey) {
-                alert('请先登录');
+                showMessage('请先登录', 'error');
                 window.location.href = '/auth.html';
                 return null;
             }
@@ -252,13 +292,31 @@
                 const res = await fetch(API_BASE + '/api/user/api-keys?api_key=' + auth.apiKey);
                 const data = await res.json();
                 
-                currentApiKeys = data.api_keys || [];
+                // 新格式：返回 success + new_key（旧密钥轮换）
+                if (data.success && data.new_key) {
+                    // 密钥已轮换，更新本地存储
+                    localStorage.setItem('artin_api_key', data.new_key);
+                    auth.apiKey = data.new_key;
+                    currentApiKeys = [{
+                        id: 1,
+                        name: '当前密钥',
+                        key: data.new_key,
+                        status: 'active'
+                    }];
+                    showMessage('密钥已更新！请查看下方密钥列表', 'success');
+                } else {
+                    currentApiKeys = data.api_keys || [{
+                        id: 1,
+                        name: '当前密钥',
+                        key: auth.apiKey,
+                        status: 'active'
+                    }];
+                }
                 renderApiKeys();
             } catch (e) {
-                // 如果API失败，显示默认密钥
                 currentApiKeys = [{
                     id: 1,
-                    name: '默认密钥',
+                    name: '当前密钥',
                     key: auth.apiKey,
                     status: 'active'
                 }];
@@ -317,21 +375,26 @@
             document.getElementById('modal-create-key').classList.remove('flex');
         }
 
+        // 创建新密钥（密钥轮换）
         async function confirmCreateKey() {
-            const name = document.getElementById('new-key-name').value || '新密钥';
+            if (!confirm('确定要创建新密钥吗？创建后旧密钥将失效！')) return;
             
             try {
-                const res = await fetch(API_BASE + '/api/user/api-keys?api_key=' + auth.apiKey + '&name=' + encodeURIComponent(name), {
+                const res = await fetch(API_BASE + '/api/user/api-keys?api_key=' + auth.apiKey, {
                     method: 'POST'
                 });
                 const data = await res.json();
                 
-                if (data.api_key) {
-                    alert('密钥创建成功！');
+                if (data.success && data.new_key) {
+                    alert('密钥创建成功！\\n新密钥: ' + data.new_key + '\\n\\n请保存好新密钥！');
+                    // 更新本地存储
+                    localStorage.setItem('artin_api_key', data.new_key);
+                    auth.apiKey = data.new_key;
                     loadApiKeys();
+                    document.getElementById('curl-key').textContent = data.new_key;
                     closeModal();
                 } else {
-                    alert(data.detail || '创建失败');
+                    alert(data.detail || data.message || '创建失败');
                 }
             } catch (e) {
                 alert('创建失败: ' + e.message);
@@ -340,7 +403,7 @@
 
         function copyKey(key) {
             navigator.clipboard.writeText(key).then(() => {
-                alert('已复制到剪贴板');
+                showMessage('已复制到剪贴板', 'success');
             });
         }
 
@@ -352,7 +415,7 @@
   -d '{"model": "MiniMax-M2.5", "messages": [{"role": "user", "content": "你好"}]}'`;
             
             navigator.clipboard.writeText(curl).then(() => {
-                alert('已复制到剪贴板');
+                showMessage('已复制到剪贴板', 'success');
             });
         }
 
@@ -419,6 +482,8 @@
             }).join('');
         }
 
+        let dailyChart = null;
+        
         function renderDailyUsage(daily) {
             const container = document.getElementById('daily-usage');
             
@@ -427,29 +492,68 @@
                 return;
             }
             
-            // 简单的条形图
-            const maxTokens = Math.max(...daily.map(d => d.total_tokens));
+            // Use Chart.js
+            const ctx = container.innerHTML = '<canvas id="dailyChart"></canvas>';
             
-            container.innerHTML = `
-                <div class="w-full space-y-2">
-                    ${daily.slice(-14).map(d => {
-                        const height = maxTokens > 0 ? (d.total_tokens / maxTokens * 100) : 0;
-                        return `
-                            <div class="flex items-center gap-2">
-                                <span class="text-xs text-gray-500 w-20">${d.date.slice(5)}</span>
-                                <div class="flex-1 h-6 bg-gray-100 rounded overflow-hidden">
-                                    <div class="h-full bg-gradient-to-r from-blue-400 to-blue-600 rounded" style="width: ${height}%"></div>
-                                </div>
-                                <span class="text-xs text-gray-500 w-16 text-right">${d.total_tokens.toLocaleString()}</span>
-                            </div>
-                        `;
-                    }).join('')}
-                </div>
-            `;
+            if (dailyChart) dailyChart.destroy();
+            
+            const chartData = daily.slice(-14);
+            dailyChart = new Chart(document.getElementById('dailyChart'), {
+                type: 'line',
+                data: {
+                    labels: chartData.map(d => d.date.slice(5)),
+                    datasets: [{
+                        label: 'Tokens',
+                        data: chartData.map(d => d.total_tokens),
+                        borderColor: '#3b82f6',
+                        backgroundColor: 'rgba(59, 130, 246, 0.1)',
+                        fill: true,
+                        tension: 0.3
+                    }, {
+                        label: '费用(¥)',
+                        data: chartData.map(d => d.cost),
+                        borderColor: '#10b981',
+                        backgroundColor: 'rgba(16, 185, 129, 0.1)',
+                        fill: true,
+                        tension: 0.3,
+                        yAxisID: 'y1'
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    interaction: { mode: 'index', intersect: false },
+                    scales: {
+                        y: { beginAtZero: true, title: { display: true, text: 'Tokens' }},
+                        y1: { position: 'right', beginAtZero: true, title: { display: true, text: '费用(¥)' }}
+                    }
+                }
+            });
         }
 
         function showRecharge() {
-            alert('充值功能开发中，敬请期待！');
+            document.getElementById('modal-recharge').classList.remove('hidden');
+            document.getElementById('modal-recharge').classList.add('flex');
+        }
+
+        function closeRecharge() {
+            document.getElementById('modal-recharge').classList.add('hidden');
+            document.getElementById('modal-recharge').classList.remove('flex');
+        }
+
+        function selectAmount(amount) {
+            document.getElementById('custom-amount').value = amount;
+            // Update UI
+            document.querySelectorAll('.recharge-amount').forEach(btn => {
+                if (btn.dataset.amount == amount) {
+                    btn.className = 'recharge-amount py-3 border-2 border-blue-500 bg-blue-50 rounded-lg font-medium';
+                } else {
+                    btn.className = 'recharge-amount py-3 border-2 border-gray-200 rounded-lg hover:border-gray-300';
+                }
+            });
+        }
+
+        function confirmRecharge() {
+            alert('充值功能正在开发中，敬请期待！');
         }
 
         function logout() {
