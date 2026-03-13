@@ -124,7 +124,7 @@
                         <i class="fas fa-rocket text-orange-600 mr-2"></i>快速开始
                     </h2>
                     <div class="bg-gray-900 rounded-lg p-4 overflow-x-auto">
-                        <pre class="text-green-400 text-xs font-mono whitespace-pre-wrap">curl -X POST http://47.111.4.141:8000/api/v1/chat/completions \
+                        <pre class="text-green-400 text-xs font-mono whitespace-pre-wrap">curl -X POST https://api.artinsmart.cn/api/v1/chat/completions \
   -H "Content-Type: application/json" \
   -H "Authorization: Bearer <span id="curl-key">YOUR-API-KEY</span>" \
   -d '{"model": "MiniMax-M2.5", "messages": [{"role": "user", "content": "你好"}]}'</pre>
@@ -193,7 +193,7 @@
 
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <script>
-        const API_BASE = 'http://47.111.4.141:8000';
+        const API_BASE = 'https://api.artinsmart.cn';
         let auth = null;
         let currentApiKeys = [];
 
