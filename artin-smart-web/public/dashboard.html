@@ -32,7 +32,6 @@
 
         <!-- Stats Cards -->
         <div class="grid grid-cols-1 md:grid-cols-4 gap-4 mb-6">
-            <!-- 余额 -->
             <div class="bg-white rounded-xl shadow-sm p-6 border-l-4 border-green-500">
                 <div class="flex items-center justify-between">
                     <div>
@@ -45,8 +44,6 @@
                 </div>
                 <button onclick="showRecharge()" class="mt-3 text-sm text-green-600 hover:underline">立即充值 →</button>
             </div>
-            
-            <!-- 本月调用 -->
             <div class="bg-white rounded-xl shadow-sm p-6 border-l-4 border-blue-500">
                 <div class="flex items-center justify-between">
                     <div>
@@ -59,8 +56,6 @@
                 </div>
                 <p class="mt-3 text-sm text-gray-500">次 API 调用</p>
             </div>
-            
-            <!-- Tokens -->
             <div class="bg-white rounded-xl shadow-sm p-6 border-l-4 border-purple-500">
                 <div class="flex items-center justify-between">
                     <div>
@@ -73,8 +68,6 @@
                 </div>
                 <p class="mt-3 text-sm text-gray-500">消耗 Tokens</p>
             </div>
-            
-            <!-- 费用 -->
             <div class="bg-white rounded-xl shadow-sm p-6 border-l-4 border-orange-500">
                 <div class="flex items-center justify-between">
                     <div>
@@ -89,9 +82,7 @@
             </div>
         </div>
 
-        <!-- Main Content Grid -->
         <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
-            <!-- Left: API Keys -->
             <div class="lg:col-span-2">
                 <!-- API Keys Section -->
                 <div class="bg-white rounded-xl shadow-sm p-6 mb-6">
@@ -99,18 +90,11 @@
                         <h2 class="text-lg font-semibold text-gray-900">
                             <i class="fas fa-key text-blue-600 mr-2"></i>API 密钥
                         </h2>
-                        <button onclick="createApiKey()" class="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 text-sm">
+                        <button onclick="showCreateModal()" id="create-key-btn" class="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 text-sm">
                             <i class="fas fa-plus mr-1"></i>创建新密钥
                         </button>
                     </div>
-                    
-                    <div id="api-keys-list">
-                        <div class="text-center py-8 text-gray-500">
-                            <i class="fas fa-key text-4xl mb-3 opacity-50"></i>
-                            <p>暂无 API 密钥</p>
-                            <button onclick="createApiKey()" class="mt-2 text-blue-600 hover:underline">创建您的第一个密钥</button>
-                        </div>
-                    </div>
+                    <div id="api-keys-list"></div>
                 </div>
 
                 <!-- Usage by Model -->
@@ -124,7 +108,6 @@
                             <button onclick="loadUsage(30)" class="px-3 py-1 text-sm bg-gray-100 text-gray-600 rounded-lg hover:bg-gray-200">30天</button>
                         </div>
                     </div>
-                    
                     <div id="model-usage">
                         <div class="text-center py-8 text-gray-500">
                             <i class="fas fa-spinner fa-spin text-2xl mb-3"></i>
@@ -134,9 +117,8 @@
                 </div>
             </div>
 
-            <!-- Right: Sidebar -->
+            <!-- Right Sidebar -->
             <div>
-                <!-- Quick Start -->
                 <div class="bg-white rounded-xl shadow-sm p-6 mb-6">
                     <h2 class="text-lg font-semibold text-gray-900 mb-4">
                         <i class="fas fa-rocket text-orange-600 mr-2"></i>快速开始
@@ -153,7 +135,6 @@
                     <a href="/api-docs.html" class="mt-2 block text-center text-blue-600 hover:underline text-sm">查看完整 API 文档 →</a>
                 </div>
 
-                <!-- Available Models -->
                 <div class="bg-white rounded-xl shadow-sm p-6">
                     <h2 class="text-lg font-semibold text-gray-900 mb-4">
                         <i class="fas fa-cubes text-green-600 mr-2"></i>可用模型
@@ -172,13 +153,6 @@
                                 <p class="text-xs text-gray-500">极速 • 100 TPS</p>
                             </div>
                             <span class="px-2 py-1 bg-green-100 text-green-700 text-xs rounded">可用</span>
-                        </div>
-                        <div class="flex items-center justify-between p-3 bg-gray-50 rounded-lg">
-                            <div>
-                                <p class="font-medium text-gray-900">更多模型</p>
-                                <p class="text-xs text-gray-500">即将支持...</p>
-                            </div>
-                            <span class="px-2 py-1 bg-gray-200 text-gray-500 text-xs rounded">敬请期待</span>
                         </div>
                     </div>
                 </div>
@@ -202,73 +176,36 @@
             <h3 class="text-xl font-bold text-gray-900 mb-4">创建 API 密钥</h3>
             <div class="mb-4">
                 <label class="block text-sm font-medium text-gray-700 mb-1">密钥名称（可选）</label>
-                <input type="text" id="new-key-name" placeholder="例如：我的开发密钥" 
-                    class="w-full px-4 py-2 border border-gray-300 rounded-lg">
+                <input type="text" id="new-key-name" placeholder="例如：生产环境密钥" 
+                    class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:outline-none">
             </div>
             <div class="flex gap-3">
-                <button onclick="closeModal()" class="flex-1 py-2 border border-gray-300 rounded-lg hover:bg-gray-50">取消</button>
+                <button onclick="closeCreateModal()" class="flex-1 py-2 border border-gray-300 rounded-lg hover:bg-gray-50">取消</button>
                 <button onclick="confirmCreateKey()" class="flex-1 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700">创建</button>
             </div>
         </div>
     </div>
 
-    <!-- Recharge Modal -->
-    <div id="modal-recharge" class="fixed inset-0 bg-black/50 hidden items-center justify-center z-50">
-        <div class="bg-white rounded-xl shadow-xl max-w-md w-full mx-4 p-6">
-            <h3 class="text-xl font-bold text-gray-900 mb-4">账户充值</h3>
-            
-            <div class="mb-4">
-                <label class="block text-sm font-medium text-gray-700 mb-2">选择充值金额</label>
-                <div class="grid grid-cols-3 gap-2">
-                    <button onclick="selectAmount(10)" class="recharge-amount py-3 border-2 border-blue-500 bg-blue-50 rounded-lg font-medium" data-amount="10">¥10</button>
-                    <button onclick="selectAmount(30)" class="recharge-amount py-3 border-2 border-gray-200 rounded-lg hover:border-gray-300" data-amount="30">¥30</button>
-                    <button onclick="selectAmount(50)" class="recharge-amount py-3 border-2 border-gray-200 rounded-lg hover:border-gray-300" data-amount="50">¥50</button>
-                    <button onclick="selectAmount(100)" class="recharge-amount py-3 border-2 border-gray-200 rounded-lg hover:border-gray-300" data-amount="100">¥100</button>
-                    <button onclick="selectAmount(200)" class="recharge-amount py-3 border-2 border-gray-200 rounded-lg hover:border-gray-300" data-amount="200">¥200</button>
-                    <button onclick="selectAmount(500)" class="recharge-amount py-3 border-2 border-gray-200 rounded-lg hover:border-gray-300" data-amount="500">¥500</button>
-                </div>
-            </div>
-            
-            <div class="mb-4">
-                <label class="block text-sm font-medium text-gray-700 mb-2">或输入自定义金额</label>
-                <div class="relative">
-                    <span class="absolute left-4 top-1/2 -translate-y-1/2 text-gray-500">¥</span>
-                    <input type="number" id="custom-amount" min="1" placeholder="最低1元" class="w-full pl-8 pr-4 py-3 border border-gray-300 rounded-lg">
-                </div>
-            </div>
-            
-            <div class="bg-yellow-50 border border-yellow-200 rounded-lg p-3 mb-4">
-                <p class="text-sm text-yellow-800"><i class="fas fa-info-circle mr-1"></i>支付功能正在开发中，敬请期待！</p>
-            </div>
-            
-            <div class="flex gap-3">
-                <button onclick="closeRecharge()" class="flex-1 py-2 border border-gray-300 rounded-lg hover:bg-gray-50">取消</button>
-                <button onclick="confirmRecharge()" class="flex-1 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700" disabled>立即充值（暂不可用）</button>
-            </div>
-        </div>
+    <!-- Message Toast -->
+    <div id="message-toast" class="fixed top-20 left-1/2 transform -translate-x-1/2 px-6 py-3 rounded-lg shadow-lg hidden z-50">
+        <span id="message-text"></span>
     </div>
 
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-    <!-- Chart.js -->
-    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-    
     <script>
         const API_BASE = 'http://47.111.4.141:8000';
         let auth = null;
         let currentApiKeys = [];
 
-        // 初始化
         function init() {
             auth = checkAuth();
             if (!auth) return;
             
-            // 显示用户信息
             document.getElementById('user-email').textContent = auth.user.email || auth.user.phone;
             document.getElementById('welcome-name').textContent = ((auth.user.email || auth.user.phone) + '').split('@')[0];
             document.getElementById('credits').textContent = (auth.user.credits || 0).toFixed(2);
             document.getElementById('curl-key').textContent = auth.apiKey;
             
-            // 加载API密钥和用量
             loadApiKeys();
             loadUsage(7);
         }
@@ -276,54 +213,42 @@
         function checkAuth() {
             const user = localStorage.getItem('artin_user');
             const apiKey = localStorage.getItem('artin_api_key');
-            
             if (!user || !apiKey) {
-                showMessage('请先登录', 'error');
                 window.location.href = '/auth.html';
                 return null;
             }
-            
             return { user: JSON.parse(user), apiKey };
         }
 
-        // 加载 API 密钥列表
+        // 加载 API Keys
         async function loadApiKeys() {
             try {
-                const res = await fetch(API_BASE + '/api/user/api-keys?api_key=' + auth.apiKey);
+                const res = await fetch(API_BASE + '/api/api-keys?api_key=' + auth.apiKey);
                 const data = await res.json();
                 
-                // 新格式：返回 success + new_key（旧密钥轮换）
-                if (data.success && data.new_key) {
-                    // 密钥已轮换，更新本地存储
-                    localStorage.setItem('artin_api_key', data.new_key);
-                    auth.apiKey = data.new_key;
-                    currentApiKeys = [{
-                        id: 1,
-                        name: '当前密钥',
-                        key: data.new_key,
-                        status: 'active'
-                    }];
-                    showMessage('密钥已更新！请查看下方密钥列表', 'success');
+                if (Array.isArray(data)) {
+                    currentApiKeys = data;
                 } else {
                     currentApiKeys = data.api_keys || [{
-                        id: 1,
-                        name: '当前密钥',
-                        key: auth.apiKey,
-                        status: 'active'
+                        id: 0, name: '默认密钥', key: auth.apiKey, status: 'active',
+                        created_at: new Date().toISOString()
                     }];
                 }
                 renderApiKeys();
+                
+                // 更新创建按钮状态
+                const btn = document.getElementById('create-key-btn');
+                if (currentApiKeys.length >= 10) {
+                    btn.disabled = true;
+                    btn.classList.add('opacity-50', 'cursor-not-allowed');
+                }
             } catch (e) {
-                currentApiKeys = [{
-                    id: 1,
-                    name: '当前密钥',
-                    key: auth.apiKey,
-                    status: 'active'
-                }];
+                currentApiKeys = [{ id: 0, name: '默认密钥', key: auth.apiKey, status: 'active' }];
                 renderApiKeys();
             }
         }
 
+        // 渲染 API Keys
         function renderApiKeys() {
             const container = document.getElementById('api-keys-list');
             
@@ -332,237 +257,230 @@
                     <div class="text-center py-8 text-gray-500">
                         <i class="fas fa-key text-4xl mb-3 opacity-50"></i>
                         <p>暂无 API 密钥</p>
-                        <button onclick="createApiKey()" class="mt-2 text-blue-600 hover:underline">创建您的第一个密钥</button>
-                    </div>
-                `;
+                    </div>`;
                 return;
             }
             
             container.innerHTML = currentApiKeys.map(key => `
-                <div class="border border-gray-200 rounded-lg p-4 mb-3 hover:shadow-md transition">
+                <div class="border rounded-lg p-4 mb-3 ${key.key === auth.apiKey ? 'bg-blue-50 border-blue-200' : 'border-gray-200'}">
                     <div class="flex justify-between items-start">
                         <div class="flex-1">
-                            <div class="flex items-center gap-2">
-                                <p class="font-medium text-gray-900">${key.name || '未命名密钥'}</p>
+                            <div class="flex items-center gap-2 mb-2">
+                                <input type="text" value="${key.name || '未命名'}" 
+                                    onchange="updateKeyName(${key.id}, this.value)"
+                                    class="font-medium bg-transparent border-b border-transparent hover:border-gray-300 focus:border-blue-500 focus:outline-none px-1 w-48">
+                                ${key.key === auth.apiKey ? '<span class="px-2 py-0.5 bg-blue-100 text-blue-700 text-xs rounded">当前使用</span>' : ''}
                                 <span class="px-2 py-0.5 ${key.status === 'active' ? 'bg-green-100 text-green-700' : 'bg-gray-100 text-gray-500'} text-xs rounded">
-                                    ${key.status === 'active' ? '正常' : '已停用'}
+                                    ${key.status === 'active' ? '正常' : '已禁用'}
                                 </span>
                             </div>
-                            <code class="text-sm text-gray-500 bg-gray-100 px-2 py-1 rounded mt-2 inline-block">${key.key}</code>
-                            <p class="text-xs text-gray-400 mt-2">创建于：${key.created_at || '未知'}</p>
+                            <div class="flex items-center gap-2 bg-gray-100 rounded px-3 py-2 mb-1">
+                                <code class="text-sm text-gray-700 flex-1 font-mono truncate">${key.key}</code>
+                                <button onclick="copyKey('${key.key}')" class="text-gray-500 hover:text-blue-600" title="复制">
+                                    <i class="fas fa-copy"></i>
+                                </button>
+                            </div>
+                            <p class="text-xs text-gray-400">创建于 ${new Date(key.created_at).toLocaleString()}</p>
                         </div>
-                        <div class="flex gap-2">
-                            <button onclick="copyKey('${key.key}')" class="p-2 text-gray-500 hover:text-blue-600 hover:bg-blue-50 rounded" title="复制">
-                                <i class="fas fa-copy"></i>
+                        <div class="flex flex-col gap-2 ml-3">
+                            <button onclick="toggleKeyStatus(${key.id}, '${key.status}')" 
+                                class="text-xs px-3 py-1 rounded ${key.status === 'active' ? 'bg-yellow-100 text-yellow-700 hover:bg-yellow-200' : 'bg-green-100 text-green-700 hover:bg-green-200'}">
+                                ${key.status === 'active' ? '禁用' : '启用'}
                             </button>
-                            <button onclick="deleteKey(${key.id})" class="p-2 text-gray-500 hover:text-red-600 hover:bg-red-50 rounded" title="删除">
-                                <i class="fas fa-trash"></i>
-                            </button>
+                            ${key.key !== auth.apiKey ? `
+                                <button onclick="regenerateKey(${key.id})" class="text-xs px-3 py-1 bg-gray-100 text-gray-600 rounded hover:bg-gray-200">
+                                    重新生成
+                                </button>
+                                <button onclick="deleteKey(${key.id})" class="text-xs px-3 py-1 bg-red-100 text-red-600 rounded hover:bg-red-200">
+                                    删除
+                                </button>
+                            ` : '<span class="text-xs px-3 py-1 text-gray-400 text-center">当前密钥</span>'}
                         </div>
                     </div>
                 </div>
             `).join('');
         }
 
-        // 创建 API 密钥
-        function createApiKey() {
+        // 创建密钥
+        function showCreateModal() {
+            if (currentApiKeys.length >= 10) {
+                showMessage('最多只能创建10个密钥', 'error');
+                return;
+            }
             document.getElementById('modal-create-key').classList.remove('hidden');
             document.getElementById('modal-create-key').classList.add('flex');
         }
-
-        function closeModal() {
+        function closeCreateModal() {
             document.getElementById('modal-create-key').classList.add('hidden');
             document.getElementById('modal-create-key').classList.remove('flex');
         }
-
-        // 创建新密钥（密钥轮换）
         async function confirmCreateKey() {
-            if (!confirm('确定要创建新密钥吗？创建后旧密钥将失效！')) return;
-            
+            const name = document.getElementById('new-key-name').value || '新密钥';
             try {
-                const res = await fetch(API_BASE + '/api/user/api-keys?api_key=' + auth.apiKey, {
-                    method: 'POST'
+                const res = await fetch(API_BASE + '/api/api-keys?api_key=' + auth.apiKey, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ name })
                 });
                 const data = await res.json();
-                
-                if (data.success && data.new_key) {
-                    alert('密钥创建成功！\\n新密钥: ' + data.new_key + '\\n\\n请保存好新密钥！');
-                    // 更新本地存储
-                    localStorage.setItem('artin_api_key', data.new_key);
-                    auth.apiKey = data.new_key;
+                if (data.key) {
+                    showMessage('密钥创建成功！请保存：' + data.key, 'success');
+                    closeCreateModal();
                     loadApiKeys();
-                    document.getElementById('curl-key').textContent = data.new_key;
-                    closeModal();
                 } else {
-                    alert(data.detail || data.message || '创建失败');
+                    showMessage(data.detail || '创建失败', 'error');
                 }
             } catch (e) {
-                alert('创建失败: ' + e.message);
+                showMessage('创建失败', 'error');
             }
         }
 
-        function copyKey(key) {
-            navigator.clipboard.writeText(key).then(() => {
-                showMessage('已复制到剪贴板', 'success');
-            });
+        // 更新名称
+        async function updateKeyName(id, name) {
+            try {
+                const res = await fetch(API_BASE + '/api/api-keys/' + id + '?api_key=' + auth.apiKey, {
+                    method: 'PATCH',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ name })
+                });
+                const data = await res.json();
+                if (data.success) showMessage('名称已更新', 'success');
+            } catch (e) {}
         }
 
+        // 切换状态
+        async function toggleKeyStatus(id, currentStatus) {
+            const newStatus = currentStatus === 'active' ? 'disabled' : 'active';
+            try {
+                const res = await fetch(API_BASE + '/api/api-keys/' + id + '?api_key=' + auth.apiKey, {
+                    method: 'PATCH',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ status: newStatus })
+                });
+                const data = await res.json();
+                if (data.success) {
+                    showMessage(newStatus === 'active' ? '密钥已启用' : '密钥已禁用', 'success');
+                    loadApiKeys();
+                }
+            } catch (e) {}
+        }
+
+        // 删除密钥
+        async function deleteKey(id) {
+            if (!confirm('确定删除此密钥？')) return;
+            try {
+                const res = await fetch(API_BASE + '/api/api-keys/' + id + '?api_key=' + auth.apiKey, {
+                    method: 'DELETE'
+                });
+                const data = await res.json();
+                if (data.success) {
+                    showMessage('密钥已删除', 'success');
+                    loadApiKeys();
+                }
+            } catch (e) {}
+        }
+
+        // 重新生成
+        async function regenerateKey(id) {
+            if (!confirm('确定重新生成？旧密钥将立即失效！')) return;
+            try {
+                const res = await fetch(API_BASE + '/api/api-keys/' + id + '/regenerate?api_key=' + auth.apiKey, {
+                    method: 'POST'
+                });
+                const data = await res.json();
+                if (data.success) {
+                    showMessage('已重新生成，新密钥：' + data.new_key, 'success');
+                    loadApiKeys();
+                }
+            } catch (e) {}
+        }
+
+        function copyKey(key) {
+            navigator.clipboard.writeText(key).then(() => showMessage('已复制', 'success'));
+        }
         function copyCurl() {
-            const key = document.getElementById('curl-key').textContent;
-            const curl = `curl -X POST http://47.111.4.141:8000/api/v1/chat/completions \\
+            const key = auth.apiKey;
+            const curl = `curl -X POST ${API_BASE}/api/v1/chat/completions \\
   -H "Content-Type: application/json" \\
   -H "Authorization: Bearer ${key}" \\
   -d '{"model": "MiniMax-M2.5", "messages": [{"role": "user", "content": "你好"}]}'`;
-            
-            navigator.clipboard.writeText(curl).then(() => {
-                showMessage('已复制到剪贴板', 'success');
-            });
+            navigator.clipboard.writeText(curl).then(() => showMessage('已复制', 'success'));
         }
 
-        async function deleteKey(id) {
-            if (!confirm('确定要删除这个密钥吗？此操作不可恢复。')) return;
-            // 删除逻辑...
-            alert('删除功能开发中');
+        function showMessage(msg, type) {
+            const toast = document.getElementById('message-toast');
+            const text = document.getElementById('message-text');
+            text.textContent = msg;
+            toast.className = 'fixed top-20 left-1/2 transform -translate-x-1/2 px-6 py-3 rounded-lg shadow-lg z-50 ' + 
+                (type === 'success' ? 'bg-green-500 text-white' : 'bg-red-500 text-white');
+            toast.classList.remove('hidden');
+            setTimeout(() => toast.classList.add('hidden'), 3000);
         }
 
-        // 加载用量统计
         async function loadUsage(days) {
             try {
                 const res = await fetch(API_BASE + '/api/user/usage?api_key=' + auth.apiKey + '&days=' + days);
                 const data = await res.json();
-                
-                // 更新统计
-                const summary = data.summary || {};
-                document.getElementById('month-calls').textContent = summary.total_requests || 0;
-                document.getElementById('month-tokens').textContent = (summary.total_tokens || 0).toLocaleString();
-                document.getElementById('month-cost').textContent = (summary.total_cost || 0).toFixed(2);
-                document.getElementById('per-million').textContent = '10';
-                
-                // 按模型用量
+                document.getElementById('month-calls').textContent = data.summary?.total_requests || 0;
+                document.getElementById('month-tokens').textContent = (data.summary?.total_tokens || 0).toLocaleString();
+                document.getElementById('month-cost').textContent = (data.summary?.total_cost || 0).toFixed(2);
                 renderModelUsage(data.by_model || []);
-                
-                // 每日趋势
                 renderDailyUsage(data.daily || []);
             } catch (e) {
-                document.getElementById('model-usage').innerHTML = '<p class="text-gray-500 text-center py-4">暂无数据</p>';
-                document.getElementById('daily-usage').innerHTML = '<p class="text-gray-500 text-center py-4">暂无数据</p>';
+                document.getElementById('model-usage').innerHTML = '<p class="text-center py-4 text-gray-500">暂无数据</p>';
             }
         }
 
         function renderModelUsage(models) {
             const container = document.getElementById('model-usage');
-            
             if (!models || models.length === 0) {
-                container.innerHTML = '<p class="text-gray-500 text-center py-4">暂无使用记录</p>';
+                container.innerHTML = '<p class="text-center py-4 text-gray-500">暂无使用记录</p>';
                 return;
             }
-            
             const total = models.reduce((sum, m) => sum + m.total_tokens, 0);
-            
-            container.innerHTML = models.map(m => {
+            const colors = ['bg-blue-500', 'bg-purple-500', 'bg-green-500', 'bg-orange-500'];
+            container.innerHTML = models.map((m, i) => {
                 const pct = total > 0 ? (m.total_tokens / total * 100).toFixed(1) : 0;
-                const colors = ['bg-blue-500', 'bg-purple-500', 'bg-green-500', 'bg-orange-500', 'bg-red-500'];
-                const color = colors[models.indexOf(m) % colors.length];
-                
                 return `
                     <div class="mb-4">
                         <div class="flex justify-between text-sm mb-1">
-                            <span class="font-medium">${m.model}</span>
-                            <span class="text-gray-500">${m.total_tokens.toLocaleString()} tokens (${pct}%)</span>
+                            <span>${m.model}</span>
+                            <span class="text-gray-500">${m.total_tokens.toLocaleString()} tokens</span>
                         </div>
-                        <div class="h-2 bg-gray-200 rounded-full overflow-hidden">
-                            <div class="h-full ${color} rounded-full" style="width: ${pct}%"></div>
-                        </div>
-                        <div class="flex justify-between text-xs text-gray-500 mt-1">
-                            <span>${m.requests} 次调用</span>
-                            <span>¥${m.cost.toFixed(4)}</span>
-                        </div>
-                    </div>
-                `;
+                        <div class="h-2 bg-gray-200 rounded-full"><div class="h-full ${colors[i % colors.length]} rounded-full" style="width: ${pct}%"></div></div>
+                    </div>`;
             }).join('');
         }
 
         let dailyChart = null;
-        
         function renderDailyUsage(daily) {
             const container = document.getElementById('daily-usage');
-            
             if (!daily || daily.length === 0) {
-                container.innerHTML = '<p class="text-gray-500 text-center py-4">暂无数据</p>';
+                container.innerHTML = '<p class="text-center py-4 text-gray-500">暂无数据</p>';
                 return;
             }
-            
-            // Use Chart.js
-            const ctx = container.innerHTML = '<canvas id="dailyChart"></canvas>';
-            
+            container.innerHTML = '<canvas id="dailyChart"></canvas>';
             if (dailyChart) dailyChart.destroy();
-            
-            const chartData = daily.slice(-14);
-            dailyChart = new Chart(document.getElementById('dailyChart'), {
+            const ctx = document.getElementById('dailyChart').getContext('2d');
+            dailyChart = new Chart(ctx, {
                 type: 'line',
                 data: {
-                    labels: chartData.map(d => d.date.slice(5)),
+                    labels: daily.map(d => d.date.slice(5)),
                     datasets: [{
                         label: 'Tokens',
-                        data: chartData.map(d => d.total_tokens),
-                        borderColor: '#3b82f6',
-                        backgroundColor: 'rgba(59, 130, 246, 0.1)',
-                        fill: true,
-                        tension: 0.3
-                    }, {
-                        label: '费用(¥)',
-                        data: chartData.map(d => d.cost),
-                        borderColor: '#10b981',
-                        backgroundColor: 'rgba(16, 185, 129, 0.1)',
-                        fill: true,
-                        tension: 0.3,
-                        yAxisID: 'y1'
+                        data: daily.map(d => d.total_tokens),
+                        borderColor: '#3b82f6', backgroundColor: 'rgba(59,130,246,0.1)', fill: true, tension: 0.3
                     }]
                 },
-                options: {
-                    responsive: true,
-                    interaction: { mode: 'index', intersect: false },
-                    scales: {
-                        y: { beginAtZero: true, title: { display: true, text: 'Tokens' }},
-                        y1: { position: 'right', beginAtZero: true, title: { display: true, text: '费用(¥)' }}
-                    }
-                }
+                options: { responsive: true, maintainAspectRatio: false }
             });
-        }
-
-        function showRecharge() {
-            document.getElementById('modal-recharge').classList.remove('hidden');
-            document.getElementById('modal-recharge').classList.add('flex');
-        }
-
-        function closeRecharge() {
-            document.getElementById('modal-recharge').classList.add('hidden');
-            document.getElementById('modal-recharge').classList.remove('flex');
-        }
-
-        function selectAmount(amount) {
-            document.getElementById('custom-amount').value = amount;
-            // Update UI
-            document.querySelectorAll('.recharge-amount').forEach(btn => {
-                if (btn.dataset.amount == amount) {
-                    btn.className = 'recharge-amount py-3 border-2 border-blue-500 bg-blue-50 rounded-lg font-medium';
-                } else {
-                    btn.className = 'recharge-amount py-3 border-2 border-gray-200 rounded-lg hover:border-gray-300';
-                }
-            });
-        }
-
-        function confirmRecharge() {
-            alert('充值功能正在开发中，敬请期待！');
         }
 
         function logout() {
-            localStorage.removeItem('artin_user');
-            localStorage.removeItem('artin_api_key');
+            localStorage.clear();
             window.location.href = '/';
         }
 
-        // 启动
         init();
     </script>
 </body>
