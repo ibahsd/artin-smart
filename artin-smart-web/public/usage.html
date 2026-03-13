@@ -1,0 +1,357 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>用量统计 - ArtinSmart</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<body class="bg-gray-50 min-h-screen">
+    <!-- Header -->
+    <header class="bg-white shadow-sm sticky top-0 z-50">
+        <div class="max-w-7xl mx-auto px-4 py-4 flex justify-between items-center">
+            <div class="flex items-center gap-4">
+                <a href="/dashboard.html" class="text-xl font-bold text-blue-600">ArtinSmart</a>
+                <span class="text-gray-400">|</span>
+                <span class="text-gray-700">用量统计</span>
+            </div>
+            <div class="flex items-center gap-4">
+                <a href="/dashboard.html" class="text-sm text-gray-600 hover:text-blue-600">
+                    <i class="fas fa-arrow-left mr-1"></i>返回控制台
+                </a>
+            </div>
+        </div>
+    </header>
+
+    <div class="max-w-7xl mx-auto px-4 py-8">
+        <!-- 时间筛选 -->
+        <div class="bg-white rounded-xl shadow-sm p-4 mb-6">
+            <div class="flex flex-wrap gap-4 items-center">
+                <span class="text-sm font-medium text-gray-700">统计周期：</span>
+                <div class="flex gap-2">
+                    <button onclick="loadStats(1)" class="period-btn px-4 py-2 rounded-lg text-sm font-medium bg-gray-100 text-gray-600 hover:bg-gray-200" data-days="1">今日</button>
+                    <button onclick="loadStats(7)" class="period-btn px-4 py-2 rounded-lg text-sm font-medium bg-blue-100 text-blue-600" data-days="7">近7天</button>
+                    <button onclick="loadStats(30)" class="period-btn px-4 py-2 rounded-lg text-sm font-medium bg-gray-100 text-gray-600 hover:bg-gray-200" data-days="30">近30天</button>
+                    <button onclick="loadStats(90)" class="period-btn px-4 py-2 rounded-lg text-sm font-medium bg-gray-100 text-gray-600 hover:bg-gray-200" data-days="90">近90天</button>
+                </div>
+                <div class="ml-auto text-sm text-gray-500">
+                    数据更新时间：<span id="update-time">-</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- 核心指标卡片 -->
+        <div class="grid grid-cols-1 md:grid-cols-4 gap-4 mb-6">
+            <div class="bg-gradient-to-br from-blue-500 to-blue-600 rounded-xl shadow-lg p-6 text-white">
+                <div class="flex items-center justify-between">
+                    <div>
+                        <p class="text-blue-100 text-sm">总请求次数</p>
+                        <p class="text-3xl font-bold mt-1" id="stat-requests">-</p>
+                    </div>
+                    <div class="w-12 h-12 bg-white/20 rounded-full flex items-center justify-center">
+                        <i class="fas fa-paper-plane text-xl"></i>
+                    </div>
+                </div>
+            </div>
+            <div class="bg-gradient-to-br from-purple-500 to-purple-600 rounded-xl shadow-lg p-6 text-white">
+                <div class="flex items-center justify-between">
+                    <div>
+                        <p class="text-purple-100 text-sm">总 Token 数</p>
+                        <p class="text-3xl font-bold mt-1" id="stat-tokens">-</p>
+                    </div>
+                    <div class="w-12 h-12 bg-white/20 rounded-full flex items-center justify-center">
+                        <i class="fas fa-microchip text-xl"></i>
+                    </div>
+                </div>
+                <p class="mt-2 text-sm text-purple-100">
+                    Input: <span id="stat-input">-</span> | Output: <span id="stat-output">-</span>
+                </p>
+            </div>
+            <div class="bg-gradient-to-br from-orange-500 to-orange-600 rounded-xl shadow-lg p-6 text-white">
+                <div class="flex items-center justify-between">
+                    <div>
+                        <p class="text-orange-100 text-sm">总费用</p>
+                        <p class="text-3xl font-bold mt-1">¥<span id="stat-cost">-</span></p>
+                    </div>
+                    <div class="w-12 h-12 bg-white/20 rounded-full flex items-center justify-center">
+                        <i class="fas fa-yen-sign text-xl"></i>
+                    </div>
+                </div>
+            </div>
+            <div class="bg-gradient-to-br from-green-500 to-green-600 rounded-xl shadow-lg p-6 text-white">
+                <div class="flex items-center justify-between">
+                    <div>
+                        <p class="text-green-100 text-sm">平均每次费用</p>
+                        <p class="text-3xl font-bold mt-1">¥<span id="stat-avg">-</span></p>
+                    </div>
+                    <div class="w-12 h-12 bg-white/20 rounded-full flex items-center justify-center">
+                        <i class="fas fa-chart-line text-xl"></i>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- 图表区域 -->
+        <div class="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-6">
+            <!-- 趋势图 -->
+            <div class="bg-white rounded-xl shadow-sm p-6">
+                <h3 class="text-lg font-semibold text-gray-900 mb-4">
+                    <i class="fas fa-chart-line text-blue-600 mr-2"></i>用量趋势
+                </h3>
+                <div class="h-80">
+                    <canvas id="trendChart"></canvas>
+                </div>
+            </div>
+
+            <!-- 模型分布 -->
+            <div class="bg-white rounded-xl shadow-sm p-6">
+                <h3 class="text-lg font-semibold text-gray-900 mb-4">
+                    <i class="fas fa-chart-pie text-purple-600 mr-2"></i>模型使用分布
+                </h3>
+                <div class="h-80 flex items-center justify-center">
+                    <canvas id="modelChart"></canvas>
+                </div>
+            </div>
+        </div>
+
+        <div class="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-6">
+            <!-- Token 分布 -->
+            <div class="bg-white rounded-xl shadow-sm p-6">
+                <h3 class="text-lg font-semibold text-gray-900 mb-4">
+                    <i class="fas fa-chart-bar text-orange-600 mr-2"></i>Input vs Output
+                </h3>
+                <div class="h-80">
+                    <canvas id="tokenChart"></canvas>
+                </div>
+            </div>
+
+            <!-- 费用趋势 -->
+            <div class="bg-white rounded-xl shadow-sm p-6">
+                <h3 class="text-lg font-semibold text-gray-900 mb-4">
+                    <i class="fas fa-coins text-green-600 mr-2"></i>费用趋势
+                </h3>
+                <div class="h-80">
+                    <canvas id="costChart"></canvas>
+                </div>
+            </div>
+        </div>
+
+        <!-- 详细数据表格 -->
+        <div class="bg-white rounded-xl shadow-sm p-6">
+            <h3 class="text-lg font-semibold text-gray-900 mb-4">
+                <i class="fas fa-table text-gray-600 mr-2"></i>详细数据
+            </h3>
+            <div class="overflow-x-auto">
+                <table class="w-full text-sm text-left">
+                    <thead class="bg-gray-50 text-gray-700">
+                        <tr>
+                            <th class="px-4 py-3 rounded-l-lg">日期</th>
+                            <th class="px-4 py-3">请求次数</th>
+                            <th class="px-4 py-3">Input Tokens</th>
+                            <th class="px-4 py-3">Output Tokens</th>
+                            <th class="px-4 py-3">总 Tokens</th>
+                            <th class="px-4 py-3 rounded-r-lg">费用 (¥)</th>
+                        </tr>
+                    </thead>
+                    <tbody id="detail-table">
+                        <tr>
+                            <td colspan="6" class="px-4 py-8 text-center text-gray-500">
+                                <i class="fas fa-spinner fa-spin mr-2"></i>加载中...
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const API_BASE = 'https://api.artinsmart.cn';
+        let auth = null;
+        let charts = {};
+
+        function init() {
+            auth = checkAuth();
+            if (!auth) return;
+            loadStats(7);
+        }
+
+        function checkAuth() {
+            const apiKey = localStorage.getItem('artin_api_key');
+            if (!apiKey) {
+                window.location.href = '/auth.html';
+                return null;
+            }
+            return { apiKey };
+        }
+
+        async function loadStats(days) {
+            // 更新按钮状态
+            document.querySelectorAll('.period-btn').forEach(btn => {
+                if (parseInt(btn.dataset.days) === days) {
+                    btn.className = 'period-btn px-4 py-2 rounded-lg text-sm font-medium bg-blue-100 text-blue-600';
+                } else {
+                    btn.className = 'period-btn px-4 py-2 rounded-lg text-sm font-medium bg-gray-100 text-gray-600 hover:bg-gray-200';
+                }
+            });
+
+            try {
+                const res = await fetch(`${API_BASE}/api/user/usage?api_key=${auth.apiKey}&days=${days}`);
+                const data = await res.json();
+                
+                updateSummary(data.summary);
+                updateCharts(data);
+                updateTable(data.daily);
+                
+                document.getElementById('update-time').textContent = new Date().toLocaleString();
+            } catch (e) {
+                console.error('加载失败:', e);
+            }
+        }
+
+        function updateSummary(summary) {
+            document.getElementById('stat-requests').textContent = summary.total_requests.toLocaleString();
+            document.getElementById('stat-tokens').textContent = summary.total_tokens.toLocaleString();
+            document.getElementById('stat-input').textContent = summary.total_input_tokens.toLocaleString();
+            document.getElementById('stat-output').textContent = summary.total_output_tokens.toLocaleString();
+            document.getElementById('stat-cost').textContent = summary.total_cost.toFixed(4);
+            
+            const avg = summary.total_requests > 0 ? (summary.total_cost / summary.total_requests).toFixed(4) : '0.0000';
+            document.getElementById('stat-avg').textContent = avg;
+        }
+
+        function updateCharts(data) {
+            const daily = data.daily;
+            const byModel = data.by_model;
+
+            // 趋势图
+            if (charts.trend) charts.trend.destroy();
+            charts.trend = new Chart(document.getElementById('trendChart'), {
+                type: 'line',
+                data: {
+                    labels: daily.map(d => d.date.slice(5)),
+                    datasets: [{
+                        label: '请求次数',
+                        data: daily.map(d => d.requests),
+                        borderColor: '#3b82f6',
+                        backgroundColor: 'rgba(59, 130, 246, 0.1)',
+                        fill: true,
+                        tension: 0.3,
+                        yAxisID: 'y'
+                    }, {
+                        label: 'Token 数',
+                        data: daily.map(d => d.total_tokens),
+                        borderColor: '#8b5cf6',
+                        backgroundColor: 'rgba(139, 92, 246, 0.1)',
+                        fill: true,
+                        tension: 0.3,
+                        yAxisID: 'y1'
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    interaction: { mode: 'index', intersect: false },
+                    scales: {
+                        y: { type: 'linear', display: true, position: 'left', title: { display: true, text: '请求次数' } },
+                        y1: { type: 'linear', display: true, position: 'right', title: { display: true, text: 'Token 数' }, grid: { drawOnChartArea: false } }
+                    }
+                }
+            });
+
+            // 模型分布饼图
+            if (charts.model) charts.model.destroy();
+            charts.model = new Chart(document.getElementById('modelChart'), {
+                type: 'doughnut',
+                data: {
+                    labels: byModel.map(m => m.model),
+                    datasets: [{
+                        data: byModel.map(m => m.total_tokens),
+                        backgroundColor: ['#3b82f6', '#8b5cf6', '#10b981', '#f59e0b', '#ef4444']
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: { position: 'bottom' }
+                    }
+                }
+            });
+
+            // Token 分布柱状图
+            if (charts.token) charts.token.destroy();
+            charts.token = new Chart(document.getElementById('tokenChart'), {
+                type: 'bar',
+                data: {
+                    labels: daily.map(d => d.date.slice(5)),
+                    datasets: [{
+                        label: 'Input',
+                        data: daily.map(d => d.input_tokens),
+                        backgroundColor: '#3b82f6'
+                    }, {
+                        label: 'Output',
+                        data: daily.map(d => d.output_tokens),
+                        backgroundColor: '#8b5cf6'
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    scales: {
+                        x: { stacked: true },
+                        y: { stacked: true }
+                    }
+                }
+            });
+
+            // 费用趋势
+            if (charts.cost) charts.cost.destroy();
+            charts.cost = new Chart(document.getElementById('costChart'), {
+                type: 'line',
+                data: {
+                    labels: daily.map(d => d.date.slice(5)),
+                    datasets: [{
+                        label: '费用 (¥)',
+                        data: daily.map(d => d.cost),
+                        borderColor: '#10b981',
+                        backgroundColor: 'rgba(16, 185, 129, 0.1)',
+                        fill: true,
+                        tension: 0.3
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    scales: {
+                        y: { beginAtZero: true, title: { display: true, text: '费用 (¥)' } }
+                    }
+                }
+            });
+        }
+
+        function updateTable(daily) {
+            const tbody = document.getElementById('detail-table');
+            if (!daily || daily.length === 0) {
+                tbody.innerHTML = '<tr><td colspan="6" class="px-4 py-8 text-center text-gray-500">暂无数据</td></tr>';
+                return;
+            }
+
+            tbody.innerHTML = daily.slice().reverse().map(d => `
+                <tr class="border-b hover:bg-gray-50">
+                    <td class="px-4 py-3 font-medium">${d.date}</td>
+                    <td class="px-4 py-3">${d.requests.toLocaleString()}</td>
+                    <td class="px-4 py-3 text-blue-600">${d.input_tokens.toLocaleString()}</td>
+                    <td class="px-4 py-3 text-purple-600">${d.output_tokens.toLocaleString()}</td>
+                    <td class="px-4 py-3 font-medium">${d.total_tokens.toLocaleString()}</td>
+                    <td class="px-4 py-3 text-green-600 font-medium">¥${d.cost.toFixed(4)}</td>
+                </tr>
+            `).join('');
+        }
+
+        init();
+    </script>
+</body>
+</html>
